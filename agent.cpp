@@ -10,12 +10,14 @@ std::mt19937 engine(seeder());
 std::uniform_int_distribution<int> dist(0, 638);
 
 Agent::Agent(Model& model, int x, int y, int population,
-             int fission_threshold) :
+             int fission_threshold, int k) :
     id(new_id++),
     model(&model),
     x(x),
     y(y),
     population(population),
+    k(k),
+    r(0.025),
     fission_threshold(fission_threshold) {
         model.grid.agents[y][x] = id;
         model.agents.push_back(this);
@@ -23,12 +25,16 @@ Agent::Agent(Model& model, int x, int y, int population,
 }
 
 void Agent::grow() {
-    population += 1;
+    population += population * r;
+    if (population > k)
+        population = k;
 }
 
 void Agent::fission() {
-    Agent* new_agent = new Agent(*model, x, y, population, fission_threshold);
-    //model->agents.push_back(new_agent);
+    if (population > fission_threshold) {
+        population /= 2;
+        Agent* new_agent = new Agent(*model, x, y, population, fission_threshold, k);
+    }
 }
 
 void Agent::move(int new_x, int new_y) {
@@ -40,9 +46,6 @@ void Agent::move(int new_x, int new_y) {
 
 void Agent::step() {
     grow();
-    if (population > fission_threshold) {
-        population /= 2;
-        fission();
-    }
-    move(dist(engine), dist(engine));
+    std::cout << population << std::endl;
+    fission();
 }

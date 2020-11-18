@@ -11,11 +11,13 @@ class Agent {
         int id;
         int population;
         int fission_threshold;
+        int k;
+        double r;
         double x;
         double y;
         Model* model;
         Agent(Model& model, int x, int y, int population,
-              int fission_threshold);
+              int fission_threshold, int k);
         void grow();
         void fission();
         void step();

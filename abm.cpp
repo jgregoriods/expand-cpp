@@ -66,23 +66,16 @@ int main() {
     std::uniform_int_distribution<int> dist(10, 600);
 
     Model model;
-    Agent agent1(model, dist(engine), dist(engine), 120, 150);
-    Agent agent2(model, dist(engine), dist(engine), 120, 150);
-    Agent agent3(model, dist(engine), dist(engine), 120, 150);
-    Agent agent4(model, dist(engine), dist(engine), 120, 150);
-    Agent agent5(model, dist(engine), dist(engine), 120, 150);
-    Agent agent6(model, dist(engine), dist(engine), 120, 150);
+    Agent agent1(model, dist(engine), dist(engine), 80, 150, 200);
 
-    for (int i {0}; i < 1200; ++i) {
+    for (int i {0}; i < 100; ++i) {
         model.step();
     }
 
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
     std::cout << "Time taken by function: "
-              << duration.count() << " microseconds" << std::endl; 
-
-    std::cout << model.agents.size() << std::endl;
+              << duration.count() << " microseconds" << std::endl;
 
     return 0;
 }
