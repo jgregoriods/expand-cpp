@@ -9,9 +9,7 @@ Model::Model() {
 
 void Model::step() {
     int n_agents = agents.size();
-    //std::cout << std::endl << n_agents << std::endl;
     for (int i {0}; i < n_agents; ++i) {
         agents[i]->step();
-        //std::cout << agents[i]->population << ' ';
     }
 }

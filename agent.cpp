@@ -19,9 +19,9 @@ Agent::Agent(Model& model, int x, int y, int population,
     k(k),
     r(0.025),
     fission_threshold(fission_threshold) {
-        model.grid.agents[y][x] = id;
+        if (model.grid.agents[y][x] == 0)
+            model.grid.agents[y][x] = id;
         model.agents.push_back(this);
-        //std::cout << id << " was born!" << std::endl;
 }
 
 void Agent::grow() {
@@ -38,7 +38,8 @@ void Agent::fission() {
 }
 
 void Agent::move(int new_x, int new_y) {
-    model->grid.agents[y][x] = 0;
+    if (model->grid.agents[y][x] == id)
+        model->grid.agents[y][x] = 0;
     x = new_x;
     y = new_y;
     model->grid.agents[new_y][new_x] = id;
@@ -46,6 +47,5 @@ void Agent::move(int new_x, int new_y) {
 
 void Agent::step() {
     grow();
-    std::cout << population << std::endl;
     fission();
 }
