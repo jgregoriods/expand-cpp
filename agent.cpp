@@ -19,7 +19,7 @@ Agent::Agent(Model& model, int x, int y, int population,
     fission_threshold(fission_threshold) {
         model.grid.agents[y][x] = id;
         model.agents.push_back(this);
-        std::cout << id << " was born!" << std::endl;
+        //std::cout << id << " was born!" << std::endl;
 }
 
 void Agent::grow() {

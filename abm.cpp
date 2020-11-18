@@ -4,12 +4,16 @@
 #include <fstream>
 #include <sstream>
 #include <random>
+#include <chrono> //remove
 
 #include "model.h"
 #include "agent.h"
 #include "grid.h"
 
+using namespace std::chrono; // remove
+
 int main() {
+    auto start = high_resolution_clock::now();
     /*
     Agent agent(50);
     Model model;
@@ -69,9 +73,16 @@ int main() {
     Agent agent5(model, dist(engine), dist(engine), 120, 150);
     Agent agent6(model, dist(engine), dist(engine), 120, 150);
 
-    for (int i {0}; i < 35; ++i) {
+    for (int i {0}; i < 1200; ++i) {
         model.step();
     }
+
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    std::cout << "Time taken by function: "
+              << duration.count() << " microseconds" << std::endl; 
+
+    std::cout << model.agents.size() << std::endl;
 
     return 0;
 }
