@@ -19,6 +19,15 @@ Agent::Agent(Model& model, int x, int y, int population,
         land.reserve(9);
 }
 
+Agent::~Agent() {
+    std::cout << id << " died" << std::endl;
+    model->grid.agents[y][x] = 0;
+    model->grid.owner[y][x] = 0;
+    for (int i {0}; i < land.size(); ++i) {
+        model->grid.owner[land[i].second][land[i].first] = 0;
+    } 
+}
+
 void Agent::grow() {
     population += population * r;
     update_land();

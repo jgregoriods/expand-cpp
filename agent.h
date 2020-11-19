@@ -15,6 +15,7 @@ class Agent {
         Model* model;
         Agent(Model& model, int x, int y, int population,
               int fission_threshold, int k, int permanence, int leap_distance);
+        ~Agent();
         void grow();
         Agent* fission();
         void check_fission();

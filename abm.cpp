@@ -17,13 +17,14 @@ int main() {
     auto start = high_resolution_clock::now();
 
     Model model(4500);
-    Agent agent1(model, 231, 77, 120, 120, 40, 10, 15);
-    model.grid.arrival[agent1.y][agent1.x] = model.bp;
 
-    for (int i {0}; i < 1000; ++i) {
+    Agent* agent1 = new Agent(model, 231, 77, 120, 120, 40, 10, 15);
+    model.grid.arrival[agent1->y][agent1->x] = model.bp;
+
+    for (int i {0}; i < 100; ++i) {
         model.step();
     }
-    
+ 
     std::ofstream file("owners.asc");
     file << "NCOLS 638" << std::endl;
     file << "NROWS 825" << std::endl;

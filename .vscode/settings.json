@@ -47,6 +47,10 @@
         "typeinfo": "cpp",
         "ctime": "cpp",
         "chrono": "cpp",
-        "ratio": "cpp"
+        "ratio": "cpp",
+        "compare": "cpp",
+        "complex": "cpp",
+        "concepts": "cpp",
+        "ranges": "cpp"
     }
 }
