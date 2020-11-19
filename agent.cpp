@@ -26,7 +26,7 @@ void Agent::grow() {
 
 void Agent::update_land() {
     while (population > total_k) {
-        std::vector<std::pair<int, int>> cells {check_empty_cells()};
+        std::vector<std::pair<int, int>> cells {check_destinations(1)};
         if (cells.size() > 0) {
             std::pair<int, int> best_cell = get_best_cell(cells);
             land.push_back(best_cell);
@@ -48,7 +48,7 @@ Agent* Agent::fission() {
 
 void Agent::check_fission() {
     if (population > fission_threshold) {
-        std::vector<std::pair<int, int>> cells {check_empty_cells()};
+        std::vector<std::pair<int, int>> cells {check_destinations(1)};
         if (cells.size() > 0) {
             std::pair<int, int> best_cell = get_best_cell(cells);
             Agent* new_agent = fission();
@@ -129,7 +129,8 @@ std::vector<std::pair<int, int>> Agent::check_empty_cells() {
     for (int i {-1}; i <= 1; ++i) {
         for (int j {-1}; j <= 1; ++j) {
             if (is_in_grid(x+i, y+j)
-                && model->grid.owner[y+j][x+i] == 0
+                //&& model->grid.owner[y+j][x+i] == 0
+                && (model->grid.owner[y+j][x+i] == 0 || model->grid.owner[y+j][x+i] == id)
                 && model->grid.agents[y+j][x+i] == 0
                 && model->grid.elevation[y+j][x+i] >= 1)
                 cells.push_back(std::make_pair(x+i, y+j));
@@ -138,6 +139,7 @@ std::vector<std::pair<int, int>> Agent::check_empty_cells() {
     return cells;
 }
 
+// change name of this method
 std::vector<std::pair<int, int>> Agent::check_destinations(int distance) {
     std::vector<std::pair<int, int>> cells;
     cells.reserve(900);
