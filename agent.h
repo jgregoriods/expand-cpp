@@ -11,6 +11,7 @@ class Agent {
         int id, population, fission_threshold, k, permanence, time_here,
             leap_distance, total_k;
         double r, x, y;
+        bool is_alive;
         std::vector<std::pair<int, int>> land;
         Model* model;
         Agent(Model& model, int x, int y, int population,

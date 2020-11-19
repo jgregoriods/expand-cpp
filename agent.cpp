@@ -11,7 +11,7 @@ Agent::Agent(Model& model, int x, int y, int population,
              int fission_threshold, int k, int permanence, int leap_distance) :
     id(new_id++), model(&model), x(x), y(y), r(0.025), population(population),
     k(k), fission_threshold(fission_threshold), permanence(permanence),
-    time_here(0), leap_distance(leap_distance), total_k(k) {
+    time_here(0), leap_distance(leap_distance), total_k(k), is_alive(true) {
         if (model.grid.agents[y][x] == 0 && model.grid.owner[y][x] == 0)
             model.grid.agents[y][x] = id;
             model.grid.owner[y][x] = id;
@@ -141,7 +141,8 @@ std::vector<std::pair<int, int>> Agent::check_empty_cells() {
                 //&& model->grid.owner[y+j][x+i] == 0
                 && (model->grid.owner[y+j][x+i] == 0 || model->grid.owner[y+j][x+i] == id)
                 && model->grid.agents[y+j][x+i] == 0
-                && model->grid.elevation[y+j][x+i] >= 1)
+                && model->grid.elevation[y+j][x+i] >= 1
+                && model->grid.veg[y+j][x+i] >= 0.5) // REMOVE THIS LATER!!!
                 cells.push_back(std::make_pair(x+i, y+j));
         }
     }
@@ -158,7 +159,8 @@ std::vector<std::pair<int, int>> Agent::check_destinations(int distance) {
                 && get_distance(x+i, y+j) == distance
                 && model->grid.owner[y+j][x+i] == 0
                 && model->grid.agents[y+j][x+i] == 0
-                && model->grid.elevation[y+j][x+i] >= 1)
+                && model->grid.elevation[y+j][x+i] >= 1
+                && model->grid.veg[y+j][x+i] >= 0.5) // REMOVE THIS LATER!!!
                 cells.push_back(std::make_pair(x+i, y+j));
         }
     }

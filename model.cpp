@@ -17,7 +17,7 @@ void Model::step() {
     auto it = agents.begin();
     while (it != agents.end()) {
         Agent* agent = *it;
-        if (agent->id == 5 || agent->id == 7) {
+        if (!agent->is_alive) {
             delete agent;
             it = agents.erase(it);
         } else {

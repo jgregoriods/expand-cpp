@@ -7,7 +7,7 @@ class Grid {
     public:
         int height, width;
         std::vector<std::vector<int>> agents, arrival, owner;
-        std::vector<std::vector<double>> elevation, suit;
+        std::vector<std::vector<double>> elevation, suit, veg;
         Grid(int height, int width);
         Grid();
         std::vector<std::vector<double>> add_layer(std::string filename);

@@ -16,6 +16,7 @@ Grid::Grid(int height, int width) : height(height), width(width) {
 
     this->elevation = add_layer("ele.asc");
     this->suit = add_layer("suit.asc");
+    this->veg = add_layer("veg1000.asc");
 }
 
 Grid::Grid() : height(825), width(638) {}

@@ -18,10 +18,10 @@ int main() {
 
     Model model(4500);
 
-    Agent* agent1 = new Agent(model, 231, 77, 120, 120, 40, 10, 15);
+    Agent* agent1 = new Agent(model, 231, 77, 120, 120, 40, 10, 0);
     model.grid.arrival[agent1->y][agent1->x] = model.bp;
 
-    for (int i {0}; i < 100; ++i) {
+    for (int i {0}; i < 4500; ++i) {
         model.step();
     }
  
