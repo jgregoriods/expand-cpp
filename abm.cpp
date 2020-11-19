@@ -68,12 +68,18 @@ int main() {
     std::uniform_int_distribution<int> dist(10, 600);
 
     Model model;
-    Agent agent1(model, 300, 300, 151, 150, 200);
+    Agent agent1(model, 200, 100, 151, 150, 200, 10);
 
-    for (int i {0}; i < 100; ++i)
+    for (int i {0}; i < 300; ++i)
         model.step();
     
     std::ofstream file("result.asc");
+    file << "NCOLS 638" << std::endl;
+    file << "NROWS 825" << std::endl;
+    file << "XLLCORNER -2985163.8955" << std::endl;
+    file << "YLLCORNER -3022031.214" << std::endl;
+    file << "CELLSIZE 10000" << std::endl;
+    file << "NODATA_value 0" << std::endl;
     std::ostream_iterator<int> it(file, "\t");
     for (int i {0}; i < model.grid.agents.size(); ++i) {
         std::copy(model.grid.agents.at(i).begin(),
