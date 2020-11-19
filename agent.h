@@ -19,9 +19,11 @@ class Agent {
         Agent(Model& model, int x, int y, int population,
               int fission_threshold, int k);
         void grow();
-        void fission();
+        Agent* fission();
+        void check_fission();
         void step();
         void move(int new_x, int new_y);
+        std::vector<std::pair<int, int>> check_empty_cells();
 };
 
 #endif

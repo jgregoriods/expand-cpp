@@ -5,6 +5,8 @@
 #include <sstream>
 #include <random>
 #include <chrono> //remove
+#include <utility>
+#include <iterator>
 
 #include "model.h"
 #include "agent.h"
@@ -66,10 +68,17 @@ int main() {
     std::uniform_int_distribution<int> dist(10, 600);
 
     Model model;
-    Agent agent1(model, dist(engine), dist(engine), 80, 150, 200);
+    Agent agent1(model, 300, 300, 151, 150, 200);
 
-    for (int i {0}; i < 100; ++i) {
+    for (int i {0}; i < 100; ++i)
         model.step();
+    
+    std::ofstream file("result.asc");
+    std::ostream_iterator<int> it(file, "\t");
+    for (int i {0}; i < model.grid.agents.size(); ++i) {
+        std::copy(model.grid.agents.at(i).begin(),
+                  model.grid.agents.at(i).end(), it);
+        file << std::endl;
     }
 
     auto stop = high_resolution_clock::now();
