@@ -22,7 +22,6 @@ Grid::Grid(int height, int width) : height(height), width(width) {
 Grid::Grid() : height(825), width(638) {}
 
 std::vector<std::vector<double>> Grid::add_layer(std::string filename) {
-    std::string line;
     std::vector<std::vector<double>> v;
     std::ifstream file(filename);
     if (file.is_open()) {

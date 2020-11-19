@@ -13,6 +13,7 @@ class Model {
         std::vector<Agent*> agents;
         Grid grid;
         Model(int start_date);
+        void update_env();
         void step();
 };
 

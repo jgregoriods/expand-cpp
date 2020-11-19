@@ -7,6 +7,12 @@ Model::Model(int start_date) : bp(start_date) {
     agents.reserve(500000);
 }
 
+void Model::update_env() {
+    if (bp % 50 == 0) {
+        std::cout << "test" << std::endl;
+    }
+}
+
 void Model::step() {
     /*
     int n_agents = agents.size();
@@ -25,5 +31,6 @@ void Model::step() {
             ++it;
         }
     }
+    update_env();
     bp--;
 }
