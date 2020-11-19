@@ -4,16 +4,21 @@
 #include <sstream>
 #include "grid.h"
 
-Grid::Grid() {
-    std::vector<std::vector<int>> agents_v(825, std::vector<int> (638, 0));
+Grid::Grid(int height, int width) : height(height), width(width) {
+    std::vector<std::vector<int>> agents_v(height, std::vector<int> (width, 0));
     this->agents = agents_v;
 
-    std::vector<std::vector<int>> arrival_v(825, std::vector<int> (638, -1));
+    std::vector<std::vector<int>> owner_v(height, std::vector<int> (width, 0));
+    this->owner = owner_v;
+
+    std::vector<std::vector<int>> arrival_v(height, std::vector<int> (width, -1));
     this->arrival = arrival_v;
 
     this->elevation = add_layer("ele.asc");
     this->suit = add_layer("suit.asc");
 }
+
+Grid::Grid() : height(825), width(638) {}
 
 std::vector<std::vector<double>> Grid::add_layer(std::string filename) {
     std::string line;

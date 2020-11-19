@@ -3,7 +3,6 @@
 #include <string>
 #include <fstream>
 #include <sstream>
-#include <random>
 #include <chrono> //remove
 #include <utility>
 #include <iterator>
@@ -16,66 +15,16 @@ using namespace std::chrono; // remove
 
 int main() {
     auto start = high_resolution_clock::now();
-    /*
-    Agent agent(50);
-    Model model;
-    model.agents.push_back(&agent);
-    model.agents[0]->grow();
-    std::cout << model.agents[0]->population << std::endl;
-    std::cout << agent.population << std::endl;
-    */
-
-    /*
-    Model model("jonas");
-    Agent agent(model, 50, 3.3, 4.4);
-    std::cout << agent.coord.x << "\t" << agent.coord.y << std::endl;
-    std::cout << agent.model->name << std::endl;
-    agent.model->name = "darcy";
-    std::cout << model.name << std::endl;
-    */
-
-   /*
-    Model model;
-    Agent agent1(model, 4.5, 6.7, 150, 200);
-
-    for (int i {0}; i < 1000; ++i) {
-        model.agents[0]->step();
-    }
-
-    std::cout << model.agents.size() << std::endl;
-    */
-
-    /*
-    std::string line;
-    std::vector<std::vector<double>> ele;
-    std::ifstream file("ele.asc");
-    
-    if (file.is_open()) {
-        std::string line;
-        while (std::getline(file, line)) {
-            ele.push_back(std::vector<double>());
-            std::stringstream split(line);
-            double value;
-            while (split >> value)
-                ele.back().push_back(value);
-        }
-    }
-    
-    file.close();
-    */
-    std::random_device seeder;
-    std::mt19937 engine(seeder());
-    std::uniform_int_distribution<int> dist(10, 600);
 
     Model model(4500);
-    Agent agent1(model, 300, 300, 151, 150, 200, 10, 30);
+    Agent agent1(model, 200, 200, 150, 150, 40, 20, 0);
     model.grid.arrival[agent1.y][agent1.x] = model.bp;
 
-    for (int i {0}; i < 1000; ++i) {
+    for (int i {0}; i < 4500; ++i) {
         model.step();
     }
     
-    std::ofstream file("result.asc");
+    std::ofstream file("owners.asc");
     file << "NCOLS 638" << std::endl;
     file << "NROWS 825" << std::endl;
     file << "XLLCORNER -2985163.8955" << std::endl;
@@ -83,10 +32,24 @@ int main() {
     file << "CELLSIZE 10000" << std::endl;
     file << "NODATA_value 0" << std::endl;
     std::ostream_iterator<int> it(file, "\t");
-    for (int i {0}; i < model.grid.arrival.size(); ++i) {
-        std::copy(model.grid.arrival.at(i).begin(),
-                  model.grid.arrival.at(i).end(), it);
+    for (int i {0}; i < model.grid.owner.size(); ++i) {
+        std::copy(model.grid.owner.at(i).begin(),
+                  model.grid.owner.at(i).end(), it);
         file << std::endl;
+    }
+
+    std::ofstream file2("agents.asc");
+    file2 << "NCOLS 638" << std::endl;
+    file2 << "NROWS 825" << std::endl;
+    file2 << "XLLCORNER -2985163.8955" << std::endl;
+    file2 << "YLLCORNER -3022031.214" << std::endl;
+    file2 << "CELLSIZE 10000" << std::endl;
+    file2 << "NODATA_value 0" << std::endl;
+    std::ostream_iterator<int> it2(file2, "\t");
+    for (int i {0}; i < model.grid.agents.size(); ++i) {
+        std::copy(model.grid.agents.at(i).begin(),
+                  model.grid.agents.at(i).end(), it2);
+        file2 << std::endl;
     }
 
     auto stop = high_resolution_clock::now();

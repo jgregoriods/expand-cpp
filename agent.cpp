@@ -1,5 +1,4 @@
 #include <iostream> // remove
-#include <random>
 #include <vector>
 #include <utility>
 #include <cmath>
@@ -8,23 +7,35 @@
 
 int Agent::new_id {1};
 
-std::random_device seeder;
-std::mt19937 engine(seeder());
-
 Agent::Agent(Model& model, int x, int y, int population,
              int fission_threshold, int k, int permanence, int leap_distance) :
     id(new_id++), model(&model), x(x), y(y), r(0.025), population(population),
     k(k), fission_threshold(fission_threshold), permanence(permanence),
-    time_here(0), leap_distance(leap_distance) {
-        if (model.grid.agents[y][x] == 0)
+    time_here(0), leap_distance(leap_distance), total_k(k) {
+        if (model.grid.agents[y][x] == 0 && model.grid.owner[y][x] == 0)
             model.grid.agents[y][x] = id;
+            model.grid.owner[y][x] = id;
         model.agents.push_back(this);
+        land.reserve(9);
 }
 
 void Agent::grow() {
     population += population * r;
-    if (population > k)
-        population = k;
+    update_land();
+}
+
+void Agent::update_land() {
+    while (population > total_k) {
+        std::vector<std::pair<int, int>> cells {check_empty_cells()};
+        if (cells.size() > 0) {
+            std::pair<int, int> best_cell = get_best_cell(cells);
+            land.push_back(best_cell);
+            model->grid.owner[best_cell.second][best_cell.first] = id;
+            total_k += k;
+        } else {
+            population = total_k;
+        }
+    }
 }
 
 Agent* Agent::fission() {
@@ -39,13 +50,11 @@ void Agent::check_fission() {
     if (population > fission_threshold) {
         std::vector<std::pair<int, int>> cells {check_empty_cells()};
         if (cells.size() > 0) {
-            //std::uniform_int_distribution<int> dist(0, cells.size() - 1);
-            //int cell {dist(engine)};
             std::pair<int, int> best_cell = get_best_cell(cells);
             Agent* new_agent = fission();
             new_agent->move(best_cell.first, best_cell.second);
         } else if (leap_distance > 0) {
-            std::vector<std::pair<int, int>> destinations {check_destinations()};
+            std::vector<std::pair<int, int>> destinations {check_destinations(leap_distance)};
             if (destinations.size() > 0) {
                 std::pair<int, int> best_cell = get_best_cell(destinations);
                 Agent* new_agent = fission();
@@ -56,13 +65,22 @@ void Agent::check_fission() {
 }
 
 void Agent::move(int new_x, int new_y) {
-    if (model->grid.agents[y][x] == id)
+    if (model->grid.agents[y][x] == id) {
         model->grid.agents[y][x] = 0;
+        model->grid.owner[y][x] = 0;
+        for (int i {0}; i < land.size(); ++i) {
+            model->grid.owner[land[i].second][land[i].first] = 0;
+        }
+        land.clear();
+        total_k = k;
+    }
     x = new_x;
     y = new_y;
     model->grid.agents[new_y][new_x] = id;
+    model->grid.owner[new_y][new_x] = id;
     if (model->grid.arrival[new_y][new_x] == -1)
         model->grid.arrival[new_y][new_x] = model->bp;
+    update_land();
 }
 
 void Agent::check_move() {
@@ -98,12 +116,21 @@ std::pair<int, int> Agent::get_best_cell(std::vector<std::pair<int, int>> cells)
     return best_cell;
 }
 
+bool Agent::is_in_grid(int a, int b) {
+    if (a >= 0 && a < model->grid.width && b >= 0 && b < model->grid.height)
+        return true;
+    else
+        return false;
+}
+
 std::vector<std::pair<int, int>> Agent::check_empty_cells() {
     std::vector<std::pair<int, int>> cells;
+    cells.reserve(900);
     for (int i {-1}; i <= 1; ++i) {
         for (int j {-1}; j <= 1; ++j) {
-            // no need for first condition, remove it later
-            if (model->grid.agents[y+j][x+i] == 0
+            if (is_in_grid(x+i, y+j)
+                && model->grid.owner[y+j][x+i] == 0
+                && model->grid.agents[y+j][x+i] == 0
                 && model->grid.elevation[y+j][x+i] >= 1)
                 cells.push_back(std::make_pair(x+i, y+j));
         }
@@ -111,12 +138,14 @@ std::vector<std::pair<int, int>> Agent::check_empty_cells() {
     return cells;
 }
 
-std::vector<std::pair<int, int>> Agent::check_destinations() {
+std::vector<std::pair<int, int>> Agent::check_destinations(int distance) {
     std::vector<std::pair<int, int>> cells;
-    for (int i {-leap_distance}; i <= leap_distance; ++i) {
-        for (int j {-leap_distance}; j <= leap_distance; ++j) {
-            // no need for first condition, remove it later
-            if (get_distance(x+i, y+j) == leap_distance
+    cells.reserve(900);
+    for (int i {-distance}; i <= distance; ++i) {
+        for (int j {-distance}; j <= distance; ++j) {
+            if (is_in_grid(x+i, y+j)
+                && get_distance(x+i, y+j) == distance
+                && model->grid.owner[y+j][x+i] == 0
                 && model->grid.agents[y+j][x+i] == 0
                 && model->grid.elevation[y+j][x+i] >= 1)
                 cells.push_back(std::make_pair(x+i, y+j));

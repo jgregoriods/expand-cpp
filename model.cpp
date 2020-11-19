@@ -2,7 +2,7 @@
 #include "model.h"
 
 Model::Model(int start_date) : bp(start_date) {
-    Grid new_grid;
+    Grid new_grid(825, 638);
     grid = new_grid;
     agents.reserve(500000);
 }
