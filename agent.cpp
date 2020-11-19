@@ -2,6 +2,7 @@
 #include <random>
 #include <vector>
 #include <utility>
+#include <cmath>
 #include "agent.h"
 #include "model.h"
 
@@ -11,10 +12,10 @@ std::random_device seeder;
 std::mt19937 engine(seeder());
 
 Agent::Agent(Model& model, int x, int y, int population,
-             int fission_threshold, int k, int permanence) :
+             int fission_threshold, int k, int permanence, int leap_distance) :
     id(new_id++), model(&model), x(x), y(y), r(0.025), population(population),
     k(k), fission_threshold(fission_threshold), permanence(permanence),
-    time_here(0) {
+    time_here(0), leap_distance(leap_distance) {
         if (model.grid.agents[y][x] == 0)
             model.grid.agents[y][x] = id;
         model.agents.push_back(this);
@@ -29,7 +30,8 @@ void Agent::grow() {
 Agent* Agent::fission() {
     population /= 2;
     Agent* new_agent = new Agent(*model, x, y, population,
-                                 fission_threshold, k, permanence);
+                                 fission_threshold, k, permanence,
+                                 leap_distance);
     return new_agent;
 }
 
@@ -42,6 +44,13 @@ void Agent::check_fission() {
             std::pair<int, int> best_cell = get_best_cell(cells);
             Agent* new_agent = fission();
             new_agent->move(best_cell.first, best_cell.second);
+        } else if (leap_distance > 0) {
+            std::vector<std::pair<int, int>> destinations {check_destinations()};
+            if (destinations.size() > 0) {
+                std::pair<int, int> best_cell = get_best_cell(destinations);
+                Agent* new_agent = fission();
+                new_agent->move(best_cell.first, best_cell.second);
+            }
         }
     }
 }
@@ -52,6 +61,8 @@ void Agent::move(int new_x, int new_y) {
     x = new_x;
     y = new_y;
     model->grid.agents[new_y][new_x] = id;
+    if (model->grid.arrival[new_y][new_x] == -1)
+        model->grid.arrival[new_y][new_x] = model->bp;
 }
 
 void Agent::check_move() {
@@ -92,11 +103,28 @@ std::vector<std::pair<int, int>> Agent::check_empty_cells() {
     for (int i {-1}; i <= 1; ++i) {
         for (int j {-1}; j <= 1; ++j) {
             // no need for first condition, remove it later
-            if (!(x+i == x && y+j == y)
+            if (model->grid.agents[y+j][x+i] == 0
+                && model->grid.elevation[y+j][x+i] >= 1)
+                cells.push_back(std::make_pair(x+i, y+j));
+        }
+    }
+    return cells;
+}
+
+std::vector<std::pair<int, int>> Agent::check_destinations() {
+    std::vector<std::pair<int, int>> cells;
+    for (int i {-leap_distance}; i <= leap_distance; ++i) {
+        for (int j {-leap_distance}; j <= leap_distance; ++j) {
+            // no need for first condition, remove it later
+            if (get_distance(x+i, y+j) == leap_distance
                 && model->grid.agents[y+j][x+i] == 0
                 && model->grid.elevation[y+j][x+i] >= 1)
                 cells.push_back(std::make_pair(x+i, y+j));
         }
     }
     return cells;
+}
+
+int Agent::get_distance(int x_i, int y_i) {
+    return round(sqrt(pow(x - x_i, 2) + pow(y - y_i, 2)));
 }

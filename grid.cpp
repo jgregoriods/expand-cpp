@@ -5,8 +5,12 @@
 #include "grid.h"
 
 Grid::Grid() {
-    std::vector<std::vector<int>> v(825, std::vector<int> (638, 0));
-    this->agents = v;
+    std::vector<std::vector<int>> agents_v(825, std::vector<int> (638, 0));
+    this->agents = agents_v;
+
+    std::vector<std::vector<int>> arrival_v(825, std::vector<int> (638, -1));
+    this->arrival = arrival_v;
+
     this->elevation = add_layer("ele.asc");
     this->suit = add_layer("suit.asc");
 }

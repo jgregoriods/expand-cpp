@@ -9,9 +9,10 @@ class Agent;
 
 class Model {
     public:
+        int bp;
         std::vector<Agent*> agents;
         Grid grid;
-        Model();
+        Model(int start_date);
         void step();
 };
 

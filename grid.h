@@ -5,9 +5,8 @@
 
 class Grid {
     public:
-        std::vector<std::vector<int>> agents;
-        std::vector<std::vector<double>> elevation;
-        std::vector<std::vector<double>> suit;
+        std::vector<std::vector<int>> agents, arrival;
+        std::vector<std::vector<double>> elevation, suit;
         Grid();
         std::vector<std::vector<double>> add_layer(std::string filename);
 };

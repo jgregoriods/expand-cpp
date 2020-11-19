@@ -67,11 +67,13 @@ int main() {
     std::mt19937 engine(seeder());
     std::uniform_int_distribution<int> dist(10, 600);
 
-    Model model;
-    Agent agent1(model, 200, 100, 151, 150, 200, 10);
+    Model model(4500);
+    Agent agent1(model, 300, 300, 151, 150, 200, 10, 30);
+    model.grid.arrival[agent1.y][agent1.x] = model.bp;
 
-    for (int i {0}; i < 300; ++i)
+    for (int i {0}; i < 1000; ++i) {
         model.step();
+    }
     
     std::ofstream file("result.asc");
     file << "NCOLS 638" << std::endl;
@@ -81,9 +83,9 @@ int main() {
     file << "CELLSIZE 10000" << std::endl;
     file << "NODATA_value 0" << std::endl;
     std::ostream_iterator<int> it(file, "\t");
-    for (int i {0}; i < model.grid.agents.size(); ++i) {
-        std::copy(model.grid.agents.at(i).begin(),
-                  model.grid.agents.at(i).end(), it);
+    for (int i {0}; i < model.grid.arrival.size(); ++i) {
+        std::copy(model.grid.arrival.at(i).begin(),
+                  model.grid.arrival.at(i).end(), it);
         file << std::endl;
     }
 
