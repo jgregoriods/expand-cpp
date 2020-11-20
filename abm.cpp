@@ -16,15 +16,18 @@ using namespace std::chrono; // remove
 int main() {
     auto start = high_resolution_clock::now();
 
-    Model model(4500);
+    Model model(5000);
 
-    Agent* agent1 = new Agent(model, 231, 77, 120, 120, 40, 10, 0);
+    Agent* agent1 = new Agent(model, 200, 200, 50, 50, 20, 10, 0);
     model.grid.arrival[agent1->y][agent1->x] = model.bp;
 
-    for (int i {0}; i < 4500; ++i) {
-        model.step();
-    }
+    model.run(4400);
  
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    std::cout << "Runtime: "
+              << duration.count() / 1000000.0 << " seconds" << std::endl;
+
     std::ofstream file("owners.asc");
     file << "NCOLS 638" << std::endl;
     file << "NROWS 825" << std::endl;
@@ -53,10 +56,19 @@ int main() {
         file2 << std::endl;
     }
 
-    auto stop = high_resolution_clock::now();
-    auto duration = duration_cast<microseconds>(stop - start);
-    std::cout << "Time taken by function: "
-              << duration.count() << " microseconds" << std::endl;
+    std::ofstream file3("arrival.asc");
+    file3 << "NCOLS 638" << std::endl;
+    file3 << "NROWS 825" << std::endl;
+    file3 << "XLLCORNER -2985163.8955" << std::endl;
+    file3 << "YLLCORNER -3022031.214" << std::endl;
+    file3 << "CELLSIZE 10000" << std::endl;
+    file3 << "NODATA_value -1" << std::endl;
+    std::ostream_iterator<int> it3(file3, "\t");
+    for (int i {0}; i < model.grid.arrival.size(); ++i) {
+        std::copy(model.grid.arrival.at(i).begin(),
+                  model.grid.arrival.at(i).end(), it3);
+        file3 << std::endl;
+    }
 
     return 0;
 }

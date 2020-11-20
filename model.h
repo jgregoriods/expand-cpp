@@ -15,6 +15,7 @@ class Model {
         Model(int start_date);
         void update_env();
         void step();
+        void run(int n);
 };
 
 #endif

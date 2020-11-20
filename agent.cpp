@@ -6,6 +6,8 @@
 #include "model.h"
 
 int Agent::new_id {1};
+const double SUIT_VAL {0.5};
+const double FOREST_VAL {0.58};
 
 Agent::Agent(Model& model, int x, int y, int population,
              int fission_threshold, int k, int permanence, int leap_distance) :
@@ -20,7 +22,6 @@ Agent::Agent(Model& model, int x, int y, int population,
 }
 
 Agent::~Agent() {
-    std::cout << id << " died" << std::endl;
     model->grid.agents[y][x] = 0;
     model->grid.owner[y][x] = 0;
     for (int i {0}; i < land.size(); ++i) {
@@ -40,6 +41,8 @@ void Agent::update_land() {
             std::pair<int, int> best_cell = get_best_cell(cells);
             land.push_back(best_cell);
             model->grid.owner[best_cell.second][best_cell.first] = id;
+            if (model->grid.arrival[best_cell.second][best_cell.first] == -1)
+                model->grid.arrival[best_cell.second][best_cell.first] = model->bp;
             total_k += k;
         } else {
             population = total_k;
@@ -93,14 +96,25 @@ void Agent::move(int new_x, int new_y) {
 }
 
 void Agent::check_move() {
-    if (time_here > permanence) {
+    bool forest_here {model->grid.veg[y][x] < FOREST_VAL};
+    if (time_here > permanence || !forest_here) { // VEG VALUE
         std::vector<std::pair<int, int>> cells {check_empty_cells()};
         if (cells.size() > 0) {
-            //std::uniform_int_distribution<int> dist(0, cells.size() - 1);
-            //int cell {dist(engine)};
             std::pair<int, int> best_cell = get_best_cell(cells);
             move(best_cell.first, best_cell.second);
             time_here = 0;
+        } else if (leap_distance > 0) {
+            std::vector<std::pair<int, int>> destinations {check_destinations(leap_distance)};
+            if (destinations.size() > 0) {
+                std::pair<int, int> best_cell = get_best_cell(destinations);
+                //if (model->grid.suit[best_cell.second][best_cell.first] > model->grid.suit[y][x]) {
+                    move(best_cell.first, best_cell.second);
+                //}
+            } else if (!forest_here) {
+                is_alive = false;
+            }
+        } else if (!forest_here) {
+            is_alive = false;
         }
     }
 }
@@ -142,7 +156,8 @@ std::vector<std::pair<int, int>> Agent::check_empty_cells() {
                 && (model->grid.owner[y+j][x+i] == 0 || model->grid.owner[y+j][x+i] == id)
                 && model->grid.agents[y+j][x+i] == 0
                 && model->grid.elevation[y+j][x+i] >= 1
-                && model->grid.veg[y+j][x+i] >= 0.5) // REMOVE THIS LATER!!!
+                && model->grid.suit[y+j][x+i] >= SUIT_VAL // REMOVE THIS LATER!!!
+                && model->grid.veg[y+j][x+i] >= FOREST_VAL) // REMOVE THIS LATER!!!
                 cells.push_back(std::make_pair(x+i, y+j));
         }
     }
@@ -160,7 +175,8 @@ std::vector<std::pair<int, int>> Agent::check_destinations(int distance) {
                 && model->grid.owner[y+j][x+i] == 0
                 && model->grid.agents[y+j][x+i] == 0
                 && model->grid.elevation[y+j][x+i] >= 1
-                && model->grid.veg[y+j][x+i] >= 0.5) // REMOVE THIS LATER!!!
+                && model->grid.suit[y+j][x+i] >= SUIT_VAL // REMOVE THIS LATER!!!
+                && model->grid.veg[y+j][x+i] >= FOREST_VAL) // REMOVE THIS LATER!!!
                 cells.push_back(std::make_pair(x+i, y+j));
         }
     }
