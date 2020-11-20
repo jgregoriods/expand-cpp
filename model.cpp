@@ -22,7 +22,7 @@ void Model::step() {
     auto it = agents.begin();
     while (it != agents.end()) {
         Agent* agent = *it;
-        if (!agent->is_alive) {
+        if (!agent->is_alive()) {
             delete agent;
             it = agents.erase(it);
         } else {
@@ -56,7 +56,7 @@ void Model::write() {
     std::ofstream file;
     file.open(filename);
     for (int i {0}; i < agents.size() ; ++i) {
-        file << agents[i]->x << ", " << agents[i]->y << "\n";
+        file << agents[i]->get_x() << ", " << agents[i]->get_y() << "\n";
     }
     file.close();
 }

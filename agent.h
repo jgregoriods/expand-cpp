@@ -7,13 +7,14 @@ class Model;
 
 class Agent {
     static int new_id;
+    int id, population, fission_threshold, k, permanence, time_here,
+        leap_distance, total_k;
+    double r, x, y;
+    bool alive;
+    std::vector<std::pair<int, int>> land;
+    Model* model;
+
     public:
-        int id, population, fission_threshold, k, permanence, time_here,
-            leap_distance, total_k;
-        double r, x, y;
-        bool is_alive;
-        std::vector<std::pair<int, int>> land;
-        Model* model;
         Agent(Model& model, int x, int y, int population,
               int fission_threshold, int k, int permanence, int leap_distance);
         ~Agent();
@@ -29,6 +30,9 @@ class Agent {
         int get_distance(int x_i, int y_i);
         bool is_in_grid(int a, int b);
         void update_land();
+        int get_x();
+        int get_y();
+        bool is_alive();
 };
 
 #endif

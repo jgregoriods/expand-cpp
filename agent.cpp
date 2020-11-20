@@ -13,7 +13,7 @@ Agent::Agent(Model& model, int x, int y, int population,
              int fission_threshold, int k, int permanence, int leap_distance) :
     id(new_id++), model(&model), x(x), y(y), r(0.025), population(population),
     k(k), fission_threshold(fission_threshold), permanence(permanence),
-    time_here(0), leap_distance(leap_distance), total_k(k), is_alive(true) {
+    time_here(0), leap_distance(leap_distance), total_k(k), alive(true) {
         if (model.grid.agents[y][x] == 0 && model.grid.owner[y][x] == 0)
             model.grid.agents[y][x] = id;
             model.grid.owner[y][x] = id;
@@ -111,10 +111,10 @@ void Agent::check_move() {
                     move(best_cell.first, best_cell.second);
                 //}
             } else if (!forest_here) {
-                is_alive = false;
+                alive = false;
             }
         } else if (!forest_here) {
-            is_alive = false;
+            alive = false;
         }
     }
 }
@@ -185,4 +185,16 @@ std::vector<std::pair<int, int>> Agent::check_destinations(int distance) {
 
 int Agent::get_distance(int x_i, int y_i) {
     return round(sqrt(pow(x - x_i, 2) + pow(y - y_i, 2)));
+}
+
+int Agent::get_x() {
+    return x;
+}
+
+int Agent::get_y() {
+    return y;
+}
+
+bool Agent::is_alive() {
+    return alive;
 }

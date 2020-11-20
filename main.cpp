@@ -19,16 +19,16 @@ int main() {
     Model model(5000);
 
     Agent* agent1 = new Agent(model, 229, 76, 150, 150, 50, 30, 10);
-    model.grid.arrival[agent1->y][agent1->x] = model.bp;
+    model.grid.arrival[agent1->get_y()][agent1->get_x()] = model.bp;
 
-    model.run(4400);
+    model.run(1000);
  
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
     std::cout << "Runtime: "
               << duration.count() / 1000000.0 << " seconds" << std::endl;
 
-    std::ofstream file("owners.asc");
+    std::ofstream file("output/owners.asc");
     file << "NCOLS 638" << std::endl;
     file << "NROWS 825" << std::endl;
     file << "XLLCORNER -2985163.8955" << std::endl;
@@ -42,7 +42,7 @@ int main() {
         file << std::endl;
     }
 
-    std::ofstream file2("agents.asc");
+    std::ofstream file2("output/agents.asc");
     file2 << "NCOLS 638" << std::endl;
     file2 << "NROWS 825" << std::endl;
     file2 << "XLLCORNER -2985163.8955" << std::endl;
@@ -56,7 +56,7 @@ int main() {
         file2 << std::endl;
     }
 
-    std::ofstream file3("arrival.asc");
+    std::ofstream file3("output/arrival.asc");
     file3 << "NCOLS 638" << std::endl;
     file3 << "NROWS 825" << std::endl;
     file3 << "XLLCORNER -2985163.8955" << std::endl;
