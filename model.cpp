@@ -1,5 +1,6 @@
 #include <iostream> // remove
 #include <string>
+#include <fstream>
 #include "model.h"
 
 Model::Model(int start_date) : bp(start_date) {
@@ -31,6 +32,7 @@ void Model::step() {
     }
     bp--;
     update_env();
+    write();
 }
 
 void Model::run(int n) {
@@ -46,4 +48,15 @@ void Model::run(int n) {
         std::cout.flush();
     }
     std::cout << std::endl;
+}
+
+void Model::write() {
+    std::string filename {"snapshots/$year.csv"};
+    filename.replace(filename.find("$year"), sizeof("$year") - 1, std::to_string(bp));
+    std::ofstream file;
+    file.open(filename);
+    for (int i {0}; i < agents.size() ; ++i) {
+        file << agents[i]->x << ", " << agents[i]->y << "\n";
+    }
+    file.close();
 }

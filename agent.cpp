@@ -6,8 +6,8 @@
 #include "model.h"
 
 int Agent::new_id {1};
-const double SUIT_VAL {0.5};
-const double FOREST_VAL {0.58};
+const double SUIT_VAL {0.65};
+const double FOREST_VAL {0.5};
 
 Agent::Agent(Model& model, int x, int y, int population,
              int fission_threshold, int k, int permanence, int leap_distance) :
@@ -92,17 +92,17 @@ void Agent::move(int new_x, int new_y) {
     model->grid.owner[new_y][new_x] = id;
     if (model->grid.arrival[new_y][new_x] == -1)
         model->grid.arrival[new_y][new_x] = model->bp;
+    time_here = 0;
     update_land();
 }
 
 void Agent::check_move() {
-    bool forest_here {model->grid.veg[y][x] < FOREST_VAL};
+    bool forest_here {model->grid.veg[y][x] >= FOREST_VAL};
     if (time_here > permanence || !forest_here) { // VEG VALUE
         std::vector<std::pair<int, int>> cells {check_empty_cells()};
         if (cells.size() > 0) {
             std::pair<int, int> best_cell = get_best_cell(cells);
             move(best_cell.first, best_cell.second);
-            time_here = 0;
         } else if (leap_distance > 0) {
             std::vector<std::pair<int, int>> destinations {check_destinations(leap_distance)};
             if (destinations.size() > 0) {
