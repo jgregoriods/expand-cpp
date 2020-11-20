@@ -16,7 +16,8 @@ class Model {
         void update_env();
         void step();
         void run(int n);
-        void write();
+        void write_snapshot();
+        void write_asc();
 };
 
 #endif
