@@ -6,8 +6,8 @@
 #include "model.h"
 
 int Agent::new_id {1};
-const double SUIT_VAL {0.65};
-const double FOREST_VAL {0.5};
+const double SUIT_VAL {0.1};
+const double FOREST_VAL {0.1};
 
 Agent::Agent(Model& model, int x, int y, int population,
              int fission_threshold, int k, int permanence, int leap_distance) :
@@ -30,7 +30,7 @@ Agent::~Agent() {
 }
 
 void Agent::grow() {
-    population += population * r;
+    population += round(population * r);
     update_land();
 }
 

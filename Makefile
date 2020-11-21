@@ -1,5 +1,5 @@
 expand: main.o agent.o grid.o model.o
-	g++ main.o agent.o grid.o model.o -o expand
+	g++ -pg main.o agent.o grid.o model.o -o expand --std=c++17
 
 main.o: main.cpp
 	g++ -c main.cpp
