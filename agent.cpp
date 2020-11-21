@@ -6,8 +6,17 @@
 #include "model.h"
 
 int Agent::new_id {1};
-const double SUIT_VAL {0.1};
-const double FOREST_VAL {0.1};
+std::vector<std::pair<int, int>> Agent::mask {};
+std::vector<std::pair<int, int>> ngb {std::make_pair(-1, -1),
+                                      std::make_pair(0, -1),
+                                      std::make_pair(1, -1),
+                                      std::make_pair(-1, 0),
+                                      std::make_pair(1, 0),
+                                      std::make_pair(-1, 1),
+                                      std::make_pair(0, 1),
+                                      std::make_pair(1, 1)};
+const double SUIT_VAL {0.58};
+const double FOREST_VAL {0.58};
 
 Agent::Agent(Model& model, int x, int y, int population,
              int fission_threshold, int k, int permanence, int leap_distance) :
@@ -19,6 +28,9 @@ Agent::Agent(Model& model, int x, int y, int population,
             model.grid.owner[y][x] = id;
         model.agents.push_back(this);
         land.reserve(9);
+        mask.reserve(900);
+        if (leap_distance > 0 && mask.size() < 1)
+            make_mask(leap_distance);
 }
 
 Agent::~Agent() {
@@ -66,7 +78,8 @@ void Agent::check_fission() {
             Agent* new_agent = fission();
             new_agent->move(best_cell.first, best_cell.second);
         } else if (leap_distance > 0) {
-            std::vector<std::pair<int, int>> destinations {check_destinations(leap_distance)};
+            //std::vector<std::pair<int, int>> destinations {check_destinations(leap_distance)};
+            std::vector<std::pair<int, int>> destinations {check_leap_cells()};
             if (destinations.size() > 0) {
                 std::pair<int, int> best_cell = get_best_cell(destinations);
                 Agent* new_agent = fission();
@@ -104,16 +117,17 @@ void Agent::check_move() {
             std::pair<int, int> best_cell = get_best_cell(cells);
             move(best_cell.first, best_cell.second);
         } else if (leap_distance > 0) {
-            std::vector<std::pair<int, int>> destinations {check_destinations(leap_distance)};
+            //std::vector<std::pair<int, int>> destinations {check_destinations(leap_distance)};
+            std::vector<std::pair<int, int>> destinations {check_leap_cells()};
             if (destinations.size() > 0) {
                 std::pair<int, int> best_cell = get_best_cell(destinations);
                 //if (model->grid.suit[best_cell.second][best_cell.first] > model->grid.suit[y][x]) {
                     move(best_cell.first, best_cell.second);
                 //}
-            } else if (!forest_here) {
+            } else if (!forest_here && model->agents.size() > 1) {
                 alive = false;
             }
-        } else if (!forest_here) {
+        } else if (!forest_here && model->agents.size() > 1) {
             alive = false;
         }
     }
@@ -149,18 +163,20 @@ bool Agent::is_in_grid(int a, int b) {
 std::vector<std::pair<int, int>> Agent::check_empty_cells() {
     std::vector<std::pair<int, int>> cells;
     cells.reserve(900);
-    for (int i {-1}; i <= 1; ++i) {
-        for (int j {-1}; j <= 1; ++j) {
-            if (is_in_grid(x+i, y+j)
-                //&& model->grid.owner[y+j][x+i] == 0
-                && (model->grid.owner[y+j][x+i] == 0 || model->grid.owner[y+j][x+i] == id)
-                && model->grid.agents[y+j][x+i] == 0
-                && model->grid.elevation[y+j][x+i] >= 1
-                && model->grid.suit[y+j][x+i] >= SUIT_VAL // REMOVE THIS LATER!!!
-                && model->grid.veg[y+j][x+i] >= FOREST_VAL) // REMOVE THIS LATER!!!
-                cells.push_back(std::make_pair(x+i, y+j));
-        }
+    //for (int i {-1}; i <= 1; ++i) {
+    //    for (int j {-1}; j <= 1; ++j) {
+    for (int k {0}; k < ngb.size(); ++k) {
+    int i {ngb[k].first}, j {ngb[k].second};
+        if (is_in_grid(x+i, y+j)
+            //&& model->grid.owner[y+j][x+i] == 0
+            && (model->grid.owner[y+j][x+i] == 0 || model->grid.owner[y+j][x+i] == id)
+            && model->grid.agents[y+j][x+i] == 0
+            && model->grid.elevation[y+j][x+i] >= 1
+            && model->grid.suit[y+j][x+i] >= SUIT_VAL // REMOVE THIS LATER!!!
+            && model->grid.veg[y+j][x+i] >= FOREST_VAL) // REMOVE THIS LATER!!!
+            cells.push_back(std::make_pair(x+i, y+j));
     }
+    //}
     return cells;
 }
 
@@ -183,6 +199,22 @@ std::vector<std::pair<int, int>> Agent::check_destinations(int distance) {
     return cells;
 }
 
+std::vector<std::pair<int, int>> Agent::check_leap_cells() {
+    std::vector<std::pair<int, int>> cells;
+    cells.reserve(900);
+    for (int k {0}; k < mask.size(); ++k) {
+        int i {mask[k].first}, j {mask[k].second};
+        if (is_in_grid(x+i, y+j)
+            && model->grid.owner[y+j][x+i] == 0
+            && model->grid.agents[y+j][x+i] == 0
+            && model->grid.elevation[y+j][x+i] >= 1
+            && model->grid.suit[y+j][x+i] >= SUIT_VAL // REMOVE THIS LATER!!!
+            && model->grid.veg[y+j][x+i] >= FOREST_VAL) // REMOVE THIS LATER!!!
+            cells.push_back(std::make_pair(x+i, y+j));
+    }
+    return cells;
+}
+
 int Agent::get_distance(int x_i, int y_i) {
     return round(sqrt(pow(x - x_i, 2) + pow(y - y_i, 2)));
 }
@@ -197,4 +229,13 @@ int Agent::get_y() {
 
 bool Agent::is_alive() {
     return alive;
+}
+
+void Agent::make_mask(int radius) {
+    for (int i {-radius}; i <= radius; ++i) {
+        for (int j {-radius}; j <= radius; ++j) {
+            if (get_distance(x + i, y + j) == radius)
+                mask.push_back(std::make_pair(i, j));
+        }
+    }
 }

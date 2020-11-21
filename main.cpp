@@ -18,10 +18,10 @@ int main() {
 
     Model model(5000);
 
-    Agent* agent1 = new Agent(model, 229, 76, 80, 80, 40, 10, 15);
+    Agent* agent1 = new Agent(model, 229, 76, 100, 100, 50, 10, 30);
     model.grid.arrival[agent1->get_y()][agent1->get_x()] = model.bp;
 
-    model.run(2000);
+    model.run(4400);
     model.write_asc();
  
     auto stop = high_resolution_clock::now();

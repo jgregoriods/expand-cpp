@@ -7,6 +7,7 @@ class Model;
 
 class Agent {
     static int new_id;
+    static std::vector<std::pair<int, int>> mask;
     int id, population, fission_threshold, k, permanence, time_here,
         leap_distance, total_k;
     double r, x, y;
@@ -25,7 +26,8 @@ class Agent {
         void move(int new_x, int new_y);
         void check_move();
         std::vector<std::pair<int, int>> check_empty_cells(),
-                                         check_destinations(int distance);
+                                         check_destinations(int distance),
+                                         check_leap_cells();
         std::pair<int, int> get_best_cell(std::vector<std::pair<int, int>> cells);
         int get_distance(int x_i, int y_i);
         bool is_in_grid(int a, int b);
@@ -33,6 +35,7 @@ class Agent {
         int get_x();
         int get_y();
         bool is_alive();
+        void make_mask(int radius);
 };
 
 #endif
