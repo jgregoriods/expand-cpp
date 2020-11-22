@@ -18,7 +18,7 @@ int main() {
 
     Model model(5000);
 
-    Agent* agent1 = new Agent(model, 229, 76, 100, 100, 50, 10, 30);
+    Agent* agent1 = new Agent(model, 229, 76, 80, 80, 20, 10, 0);
     model.grid.arrival[agent1->get_y()][agent1->get_x()] = model.bp;
 
     model.run(4400);

@@ -14,8 +14,8 @@ class Model {
         Grid grid;
         Model(int start_date);
         void update_env();
-        void step();
-        void run(int n);
+        void step(bool write=false);
+        void run(int n, bool write=false);
         void write_snapshot();
         void write_asc();
 };

@@ -15,8 +15,8 @@ std::vector<std::pair<int, int>> ngb {std::make_pair(-1, -1),
                                       std::make_pair(-1, 1),
                                       std::make_pair(0, 1),
                                       std::make_pair(1, 1)};
-const double SUIT_VAL {0.58};
-const double FOREST_VAL {0.58};
+const double SUIT_VAL {0.5};
+const double FOREST_VAL {0.5};
 
 Agent::Agent(Model& model, int x, int y, int population,
              int fission_threshold, int k, int permanence, int leap_distance) :
@@ -36,9 +36,10 @@ Agent::Agent(Model& model, int x, int y, int population,
 Agent::~Agent() {
     model->grid.agents[y][x] = 0;
     model->grid.owner[y][x] = 0;
-    for (int i {0}; i < land.size(); ++i) {
-        model->grid.owner[land[i].second][land[i].first] = 0;
-    } 
+    //for (int i {0}; i < land.size(); ++i)
+    //    model->grid.owner[land[i].second][land[i].first] = 0;
+    for (auto cell: land)
+        model->grid.owner[cell.second][cell.first] = 0;
 }
 
 void Agent::grow() {
@@ -93,9 +94,10 @@ void Agent::move(int new_x, int new_y) {
     if (model->grid.agents[y][x] == id) {
         model->grid.agents[y][x] = 0;
         model->grid.owner[y][x] = 0;
-        for (int i {0}; i < land.size(); ++i) {
-            model->grid.owner[land[i].second][land[i].first] = 0;
-        }
+        //for (int i {0}; i < land.size(); ++i)
+        //    model->grid.owner[land[i].second][land[i].first] = 0;
+        for (auto cell: land)
+            model->grid.owner[cell.second][cell.first] = 0;
         land.clear();
         total_k = k;
     }
@@ -143,11 +145,13 @@ void Agent::step() {
 std::pair<int, int> Agent::get_best_cell(std::vector<std::pair<int, int>> cells) {
     double best_val {-1};
     std::pair<int, int> best_cell;
-    for (int i {0}; i < cells.size(); ++i) {
-        double val = model->grid.suit[cells[i].second][cells[i].first];
+    //for (int i {0}; i < cells.size(); ++i) {
+    //    double val = model->grid.suit[cells[i].second][cells[i].first];
+    for (auto cell: cells) {
+        double val = model->grid.suit[cell.second][cell.first]; 
         if (val > best_val) {
             best_val = val;
-            best_cell = cells[i];
+            best_cell = cell;
         }
     }
     return best_cell;
@@ -165,8 +169,10 @@ std::vector<std::pair<int, int>> Agent::check_empty_cells() {
     cells.reserve(900);
     //for (int i {-1}; i <= 1; ++i) {
     //    for (int j {-1}; j <= 1; ++j) {
-    for (int k {0}; k < ngb.size(); ++k) {
-    int i {ngb[k].first}, j {ngb[k].second};
+    //for (int k {0}; k < ngb.size(); ++k) {
+    //    int i {ngb[k].first}, j {ngb[k].second};
+    for (auto cell: ngb) {
+        int i {cell.first}, j {cell.second};
         if (is_in_grid(x+i, y+j)
             //&& model->grid.owner[y+j][x+i] == 0
             && (model->grid.owner[y+j][x+i] == 0 || model->grid.owner[y+j][x+i] == id)
@@ -202,8 +208,10 @@ std::vector<std::pair<int, int>> Agent::check_destinations(int distance) {
 std::vector<std::pair<int, int>> Agent::check_leap_cells() {
     std::vector<std::pair<int, int>> cells;
     cells.reserve(900);
-    for (int k {0}; k < mask.size(); ++k) {
-        int i {mask[k].first}, j {mask[k].second};
+    //for (int k {0}; k < mask.size(); ++k) {
+    //    int i {mask[k].first}, j {mask[k].second};
+    for (auto cell: mask) {
+        int i {cell.first}, j {cell.second};
         if (is_in_grid(x+i, y+j)
             && model->grid.owner[y+j][x+i] == 0
             && model->grid.agents[y+j][x+i] == 0

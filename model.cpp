@@ -20,7 +20,7 @@ void Model::update_env() {
     }
 }
 
-void Model::step() {
+void Model::step(bool write) {
     auto it = agents.begin();
     while (it != agents.end()) {
         Agent* agent = *it;
@@ -34,14 +34,15 @@ void Model::step() {
     }
     bp--;
     update_env();
-    write_snapshot();
+    if (write)
+        write_snapshot();
 }
 
-void Model::run(int n) {
+void Model::run(int n, bool write) {
     int progress {};
     int k {};
     for (int i {0}; i < n; ++i) {
-        step();
+        step(write);
         k++;
         progress = ((double)k / (double)n) * 100;
         std::cout << "\r" << '[' << std::string(progress / 2, '#')
@@ -57,9 +58,10 @@ void Model::write_snapshot() {
     filename.replace(filename.find("$year"), sizeof("$year") - 1, std::to_string(bp));
     std::ofstream file;
     file.open(filename);
-    for (int i {0}; i < agents.size() ; ++i) {
-        file << agents[i]->get_x() << ", " << agents[i]->get_y() << "\n";
-    }
+    //for (int i {0}; i < agents.size() ; ++i)
+    //    file << agents[i]->get_x() << ", " << agents[i]->get_y() << "\n";
+    for (auto agent: agents)
+        file << agent->get_x() << ", " << agent->get_y() << "\n";
     file.close();
 }
 
