@@ -3,14 +3,25 @@
 #include <fstream>
 #include <sstream>
 #include <iterator>
+//#include <experimental/filesystem>
 #include "model.h"
 
 Model::Model(int start_date) : bp(start_date) {
     Grid new_grid(825, 638);
     grid = new_grid;
     agents.reserve(500000);
+    //dates.reserve(100);
+    //load_dates();
 }
-
+/*
+void Model::load_dates() {
+    std::string path {"dates"};
+    for (const auto& entry: std::experimental::filesystem::directory_iterator(path)) {
+        Date* date = new Date(entry.path());
+        dates.push_back(date);
+    }
+}
+*/
 void Model::update_env() {
     if (bp % 50 == 0) {
         grid.veg.clear();

@@ -6,6 +6,7 @@
 #include <map>
 #include <string>
 #include <iomanip>
+#include <experimental/filesystem>
 
 const double MIN_X {-2985163.8955};
 const double MAX_Y {5227968.786};
@@ -24,31 +25,9 @@ std::pair<double, double> to_albers(int x, int y) {
     return std::make_pair(albers_x, albers_y);
 }
 
-std::map<int, double> read_dates(std::string filename) {
-    std::string line;
-    std::map<int, double> dates;
-    //double x, y;
-    int year;
-    double prob;
-    std::ifstream file(filename);
-    if (file.is_open()) {
-        std::getline(file, line);
-        while (std::getline(file, line)) {
-            std::stringstream split(line);
-            split >> year >> prob;
-            dates.insert(std::make_pair(year, prob));
-        }
-    }
-    return dates;
-}
-
 int main() {
-    std::cout << std::fixed << std::setprecision(4);
-    auto a {read_dates("dates/Boa Vista.txt")};
-    int i {150};
-    if (a.find(i) == a.end())
-        std::cout << "not found" << std::endl;
-    else
-        std::cout << a[i] << std::endl;
+    std::string path {"dates"};
+    for (const auto& entry: std::experimental::filesystem::directory_iterator(path))
+        std::cout << entry.path() << std::endl;
     return 0;
 }

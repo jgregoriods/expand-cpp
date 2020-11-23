@@ -51,6 +51,8 @@
         "compare": "cpp",
         "complex": "cpp",
         "concepts": "cpp",
-        "ranges": "cpp"
+        "ranges": "cpp",
+        "map": "cpp",
+        "iomanip": "cpp"
     }
 }
