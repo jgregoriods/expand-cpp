@@ -14,8 +14,7 @@ Model::Model(int start_date) : bp(start_date) {
 void Model::update_env() {
     if (bp % 50 == 0) {
         grid.veg.clear();
-        std::string filename {"layers/veg$year.asc"};
-        filename.replace(filename.find("$year"), sizeof("$year") - 1, std::to_string(bp));
+        std::string filename {"layers/veg" + std::to_string(bp) + ".asc"};
         grid.veg = grid.add_layer(filename);
     }
 }
@@ -54,8 +53,7 @@ void Model::run(int n, bool write) {
 }
 
 void Model::write_snapshot() {
-    std::string filename {"snapshots/$year.csv"};
-    filename.replace(filename.find("$year"), sizeof("$year") - 1, std::to_string(bp));
+    std::string filename {"snapshots/" + std::to_string(bp) + ".csv"};
     std::ofstream file;
     file.open(filename);
     //for (int i {0}; i < agents.size() ; ++i)
