@@ -14,7 +14,7 @@ $(TARGET): $(OBJECTS)
 	$(LINKER) -o $(TARGET) $(OBJECTS)
 
 $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
-	@$(CC) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) -g -c $< -o $@
 
 clean:
 	rm $(OBJECTS)
