@@ -1,11 +1,12 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include <vector>
 #include <memory>
+#include <vector>
+
 #include "agent.h"
-#include "grid.h"
 #include "date.h"
+#include "grid.h"
 
 class Agent;
 class Date;

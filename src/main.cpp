@@ -1,17 +1,17 @@
-#include <iostream>
-#include <vector>
-#include <string>
-#include <fstream>
-#include <sstream>
 #include <chrono> //remove
+#include <fstream>
 #include <iomanip> //remove
-#include <utility>
-#include <iterator>
+#include <iostream>
 #include <memory>
-#include "model.h"
+#include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
+
 #include "agent.h"
-#include "grid.h"
 #include "date.h"
+#include "grid.h"
+#include "model.h"
 
 using namespace std::chrono; // remove
 
@@ -26,10 +26,10 @@ int main() {
     model.add(agent1);
     model.grid.arrival[agent1->get_y()][agent1->get_x()] = model.bp;
 
-    //std::cout << std::fixed << std::setprecision(4);
+    std::cout << std::fixed << std::setprecision(4);
     model.load_dates("dates");
 
-    model.run(3000);
+    model.run(1000);
     model.write_asc();
     std::cout << model.get_score() << std::endl;
 

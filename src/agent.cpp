@@ -1,8 +1,8 @@
-#include <iostream> // remove
-#include <vector>
-#include <utility>
 #include <cmath>
 #include <memory>
+#include <utility>
+#include <vector>
+
 #include "agent.h"
 #include "model.h"
 

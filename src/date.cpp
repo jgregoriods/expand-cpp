@@ -1,9 +1,9 @@
-#include <map>
-#include <string>
 #include <fstream>
+#include <map>
 #include <sstream>
+#include <string>
 #include <utility>
-#include <iomanip>
+
 #include "date.h"
 
 Date::Date(std::string filename) {

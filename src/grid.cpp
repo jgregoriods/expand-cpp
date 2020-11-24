@@ -1,8 +1,9 @@
-#include <vector>
-#include <string>
+#include <cmath>
 #include <fstream>
 #include <sstream>
-#include <cmath>
+#include <string>
+#include <vector>
+
 #include "grid.h"
 
 Grid::Grid(int height, int width) : height(height), width(width) {

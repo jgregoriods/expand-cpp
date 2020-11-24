@@ -1,8 +1,8 @@
 #ifndef GRID_H
 #define GRID_H
 
-#include <vector>
 #include <utility>
+#include <vector>
 
 class Grid {
     public:

@@ -1,9 +1,10 @@
-#include <iostream> // remove
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <iterator>
 #include <filesystem>
+#include <fstream>
+#include <iostream> // remove
+#include <iterator>
+#include <sstream>
+#include <string>
+
 #include "model.h"
 
 using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
