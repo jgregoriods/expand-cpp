@@ -21,6 +21,7 @@ class Agent {
         ~Agent();
         void grow();
         Agent* fission();
+        //std::shared_ptr<Agent> fission();
         void check_fission();
         void step();
         void move(int new_x, int new_y);

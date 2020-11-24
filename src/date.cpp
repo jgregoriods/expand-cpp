@@ -22,7 +22,7 @@ void Date::read_file(std::string filename) {
         while (std::getline(file, line)) {
             std::stringstream split(line);
             split >> year >> prob;
-            probs.insert(std::make_pair(year, prob));
+            probs.insert(std::make_pair(year, prob)); // leak here REAL
         }
     }
 }

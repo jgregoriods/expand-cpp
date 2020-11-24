@@ -1,20 +1,21 @@
-expand: main.o agent.o grid.o model.o date.o
-	g++ main.o agent.o grid.o model.o date.o -o expand
+TARGET = expand
 
-main.o: main.cpp
-	g++ -c main.cpp --std=c++17
+CC = g++
+CFLAGS = --std=c++17
+LINKER = g++
 
-agent.o: agent.cpp
-	g++ -c agent.cpp --std=c++17
+SRCDIR = src
+OBJDIR = obj
 
-grid.o: grid.cpp
-	g++ -c grid.cpp --std=c++17
+SOURCES = $(wildcard $(SRCDIR)/*.cpp)
+OBJECTS = $(SOURCES:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 
-model.o: model.cpp
-	g++ -c model.cpp --std=c++17
+$(TARGET): $(OBJECTS)
+	$(LINKER) -o $(TARGET) $(OBJECTS)
 
-date.o: date.cpp
-	g++ -c date.cpp --std=c++17
+$(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm *.o expand
+	rm $(OBJECTS)
+	rm expand

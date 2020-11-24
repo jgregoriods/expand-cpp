@@ -6,7 +6,8 @@
 #include <map>
 #include <string>
 #include <iomanip>
-#include <experimental/filesystem>
+#include <memory>
+#include <vector>
 
 const double MIN_X {-2985163.8955};
 const double MAX_Y {5227968.786};
@@ -25,9 +26,16 @@ std::pair<double, double> to_albers(int x, int y) {
     return std::make_pair(albers_x, albers_y);
 }
 
+class Test {
+    public:
+        int x;
+        Test(int x) : x(x) {}
+};
+
 int main() {
-    std::string path {"dates"};
-    for (const auto& entry: std::experimental::filesystem::directory_iterator(path))
-        std::cout << entry.path() << std::endl;
+    std::vector<std::shared_ptr<Test>> tests;
+    std::shared_ptr<Test> test(new Test(11));
+    tests.reserve(100);
+    tests.push_back(test);
     return 0;
 }

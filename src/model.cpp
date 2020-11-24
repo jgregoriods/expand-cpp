@@ -67,8 +67,6 @@ void Model::write_snapshot() {
     std::string filename {"snapshots/" + std::to_string(bp) + ".csv"};
     std::ofstream file;
     file.open(filename);
-    //for (int i {0}; i < agents.size() ; ++i)
-    //    file << agents[i]->get_x() << ", " << agents[i]->get_y() << "\n";
     for (auto agent: agents)
         file << agent->get_x() << ", " << agent->get_y() << "\n";
     file.close();
@@ -124,8 +122,11 @@ double Model::get_score() {
         std::pair<int, int> cell {grid.to_grid(date->x, date->y)};
         int sim_bp {grid.arrival[cell.second][cell.first]};
         if (date->probs.find(sim_bp) != date->probs.end())
-            std::cout << date->x << ' ' << date->y << std::endl;
-            total += date->probs[sim_bp];
+            total += date->probs[sim_bp]; // REAL LEAAAAKKKK
     }
     return total / dates.size();
+}
+
+void Model::add(Agent* agent) {
+    agents.push_back(agent);
 }
