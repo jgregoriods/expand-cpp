@@ -3,25 +3,25 @@
 #include <fstream>
 #include <sstream>
 #include <iterator>
-//#include <experimental/filesystem>
+#include <filesystem>
 #include "model.h"
+
+using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
 
 Model::Model(int start_date) : bp(start_date) {
     Grid new_grid(825, 638);
     grid = new_grid;
     agents.reserve(500000);
-    //dates.reserve(100);
-    //load_dates();
+    dates.reserve(100);
 }
-/*
-void Model::load_dates() {
-    std::string path {"dates"};
-    for (const auto& entry: std::experimental::filesystem::directory_iterator(path)) {
+
+void Model::load_dates(std::string path) {
+    for (const auto& entry: recursive_directory_iterator(path)) {
         Date* date = new Date(entry.path());
         dates.push_back(date);
     }
 }
-*/
+
 void Model::update_env() {
     if (bp % 50 == 0) {
         grid.veg.clear();
@@ -116,4 +116,16 @@ void Model::write_asc() {
                   grid.arrival.at(i).end(), it3);
         file3 << std::endl;
     }
+}
+
+double Model::get_score() {
+    double total {};
+    for (auto date: dates) {
+        std::pair<int, int> cell {grid.to_grid(date->x, date->y)};
+        int sim_bp {grid.arrival[cell.second][cell.first]};
+        if (date->probs.find(sim_bp) != date->probs.end())
+            std::cout << date->x << ' ' << date->y << std::endl;
+            total += date->probs[sim_bp];
+    }
+    return total / dates.size();
 }

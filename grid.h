@@ -2,6 +2,7 @@
 #define GRID_H
 
 #include <vector>
+#include <utility>
 
 class Grid {
     public:
@@ -11,6 +12,8 @@ class Grid {
         Grid(int height, int width);
         Grid();
         std::vector<std::vector<double>> add_layer(std::string filename);
+        std::pair<int, int> to_grid(double x, double y);
+        std::pair<double, double>to_albers(int x, int y);
 };
 
 #endif

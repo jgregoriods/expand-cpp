@@ -4,13 +4,14 @@
 #include <fstream>
 #include <sstream>
 #include <chrono> //remove
-//#include <iomanip> //remove
+#include <iomanip> //remove
 #include <utility>
 #include <iterator>
 
 #include "model.h"
 #include "agent.h"
 #include "grid.h"
+#include "date.h"
 
 using namespace std::chrono; // remove
 
@@ -19,11 +20,15 @@ int main() {
 
     Model model(5000);
 
-    Agent* agent1 = new Agent(model, 229, 76, 80, 80, 20, 10, 0);
+    Agent* agent1 = new Agent(model, 229, 76, 76, 76, 26, 16, 17);
     model.grid.arrival[agent1->get_y()][agent1->get_x()] = model.bp;
 
-    model.run(4400, true);
+    std::cout << std::fixed << std::setprecision(4);
+    model.load_dates("dates");
+
+    model.run(4400);
     model.write_asc();
+    std::cout << model.get_score() << std::endl;
  
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
