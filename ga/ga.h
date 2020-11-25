@@ -11,6 +11,7 @@ class GA {
         GA(int population_size, int num_parents, int num_elite, double prob_cross,
            double prob_mut);
         void initialize_population();
+        void evolve(int num_generations);
         int population_size;
         int num_parents;
         int num_elite;

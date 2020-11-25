@@ -11,6 +11,10 @@
 std::random_device seeder2;
 std::mt19937 engine2(seeder2());
 
+bool sort_genomes(const std::shared_ptr<Genome>& g1, const std::shared_ptr<Genome>& g2) {
+       return g1->fitness > g2->fitness;
+}
+
 GA::GA(int population_size, int num_parents, int num_elite, double prob_cross,
        double prob_mut) :
        population_size(population_size),
@@ -38,15 +42,17 @@ void GA::initialize_population() {
        }
 }
 
-bool sort_genomes(const std::shared_ptr<Genome>& g1, const std::shared_ptr<Genome>& g2) {
-       return g1->fitness < g2->fitness;
+void GA::evolve(int num_generations) {
+       for (int i {0}; i < num_generations; ++i) {
+              for (auto genome: population)
+                     genome->measure_fitness();
+              std::sort(population.begin(), population.end(), sort_genomes);
+       }
 }
 
 int main() {
        GA ga(500, 200, 50, 0.8, 0.2);
        ga.initialize_population();
-       for (auto genome: ga.population)
-              genome->measure_fitness();
-       std::sort(ga.population.begin(), ga.population.end(), sort_genomes);
+       ga.evolve(1);
        return 0;
 }
