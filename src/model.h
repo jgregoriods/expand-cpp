@@ -13,22 +13,22 @@ class Date;
 
 class Model {
     public:
-        int bp;
-        //std::vector<Agent*> agents;
-        std::vector<std::shared_ptr<Agent>> agents;
-        std::vector<std::shared_ptr<Date>> dates;
-        //std::vector<Date*> dates;
-        Grid grid;
         Model(int start_date);
-        void load_dates(std::string path);
+        void run(int n, bool write_files=false);
+        void step(bool write_files=false);
+        void add(std::shared_ptr<Agent> agent);
         void update_env();
-        void step(bool write=false);
-        void run(int n, bool write=false);
+        void load_dates(std::string path);
+        double get_score();
         void write_snapshot();
         void write_asc();
-        double get_score();
-        //void add(Agent* agent);
-        void add(std::shared_ptr<Agent> agent);
+        int get_bp();
+        int get_n_agents();
+        Grid grid;
+    private:
+        int bp;
+        std::vector<std::shared_ptr<Agent>> agents;
+        std::vector<std::shared_ptr<Date>> dates;
 };
 
 #endif

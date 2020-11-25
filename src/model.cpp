@@ -17,23 +17,22 @@ Model::Model(int start_date) : bp(start_date) {
     dates.reserve(100);
 }
 
-void Model::load_dates(std::string path) {
-    for (const auto& entry: recursive_directory_iterator(path)) {
-        //Date* date = new Date(entry.path());
-        std::shared_ptr<Date> date = std::make_shared<Date>(entry.path());
-        dates.push_back(date);
+void Model::run(int n, bool write_files) {
+    int progress {};
+    int k {};
+    for (int i {0}; i < n; ++i) {
+        step(write_files);
+        k++;
+        progress = ((double)k / (double)n) * 100;
+        std::cout << "\r" << '[' << std::string(progress / 2, '#')
+                  << std::string(50 - (progress / 2), ' ')
+                  << "] " << progress << "%";
+        std::cout.flush();
     }
+    std::cout << std::endl;
 }
 
-void Model::update_env() {
-    if (bp % 50 == 0) {
-        grid.veg.clear();
-        std::string filename {"layers/veg" + std::to_string(bp) + ".asc"};
-        grid.veg = grid.add_layer(filename);
-    }
-}
-
-void Model::step(bool write) {
+void Model::step(bool write_files) {
     auto it = agents.begin();
     while (it != agents.end()) {
         //Agent* agent = *it;
@@ -50,23 +49,37 @@ void Model::step(bool write) {
     }
     bp--;
     update_env();
-    if (write)
+    if (write_files)
         write_snapshot();
 }
 
-void Model::run(int n, bool write) {
-    int progress {};
-    int k {};
-    for (int i {0}; i < n; ++i) {
-        step(write);
-        k++;
-        progress = ((double)k / (double)n) * 100;
-        std::cout << "\r" << '[' << std::string(progress / 2, '#')
-                  << std::string(50 - (progress / 2), ' ')
-                  << "] " << progress << "%";
-        std::cout.flush();
+void Model::add(std::shared_ptr<Agent> agent) {
+    agents.push_back(std::move(agent));
+}
+
+void Model::update_env() {
+    if (bp % 50 == 0) {
+        grid.veg.clear();
+        std::string filename {"layers/veg" + std::to_string(bp) + ".asc"};
+        grid.veg = grid.add_layer(filename);
     }
-    std::cout << std::endl;
+}
+
+void Model::load_dates(std::string path) {
+    for (const auto& entry: recursive_directory_iterator(path)) {
+        std::shared_ptr<Date> date = std::make_shared<Date>(entry.path());
+        dates.push_back(date);
+    }
+}
+
+double Model::get_score() {
+    double total {};
+    for (auto date: dates) {
+        std::pair<int, int> cell {grid.to_grid(date->get_x(), date->get_y())};
+        int sim_bp {grid.arrival[cell.second][cell.first]};
+        total += date->get_prob(sim_bp);
+    }
+    return total / dates.size();
 }
 
 void Model::write_snapshot() {
@@ -122,18 +135,10 @@ void Model::write_asc() {
     }
 }
 
-double Model::get_score() {
-    double total {};
-    for (auto date: dates) {
-        std::pair<int, int> cell {grid.to_grid(date->x, date->y)};
-        int sim_bp {grid.arrival[cell.second][cell.first]};
-        if (date->probs.find(sim_bp) != date->probs.end())
-            total += date->probs[sim_bp]; // REAL LEAAAAKKKK
-    }
-    return total / dates.size();
+int Model::get_bp() {
+    return bp;
 }
 
-//void Model::add(Agent* agent) {
-void Model::add(std::shared_ptr<Agent> agent) {
-    agents.push_back(std::move(agent));
+int Model::get_n_agents() {
+    return agents.size();
 }
