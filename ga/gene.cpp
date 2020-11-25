@@ -1,23 +1,32 @@
-#include <vector>
+#include <cmath>
+#include <memory>
 #include <random>
-#include <iostream>
+#include <vector>
+
 #include "gene.h"
 
-std::random_device rd;
-std::mt19937 gen(rd());
-std::uniform_real_distribution<double> dis(0.0, 1.0);
+std::random_device seeder;
+std::mt19937 engine(seeder());
 
-Gene::Gene(int value, int min, int max, int step) :
+Gene::Gene(int value, int lower, int upper) :
     value(value),
-    min(min),
-    max(max),
-    step(step) {}
+    lower(lower),
+    upper(upper) {
+        if (value == -1) {
+            std::uniform_int_distribution<int> dist(lower, upper);
+            this->value = dist(engine);
+        }
+    }
 
 void Gene::mutate() {
-    
+    std::normal_distribution<double> dist(0.0, upper - lower);
+    int new_val {};
+    do {
+        new_val = value + round(dist(engine));
+    } while (new_val < lower || new_val > upper);
+    value = new_val;
 }
 
-int main() {
-    Gene gene(1,2,3,4);
-    gene.mutate();
+int Gene::get_value() {
+    return value;
 }

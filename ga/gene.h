@@ -1,11 +1,18 @@
 #ifndef GENE_H
 #define GENE_H
 
+#include <memory>
+#include <random>
+
 class Gene {
     public:
-        int value, min, max, step;
-        Gene(int value, int min, int max, int step);
+        Gene(int value, int lower, int upper);
         void mutate();
+        int get_value();
+    private:
+        int value;
+        int lower;
+        int upper;
 };
 
 #endif
