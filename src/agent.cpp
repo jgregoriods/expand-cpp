@@ -1,4 +1,5 @@
 #include <cmath>
+#include <iostream> // remove
 #include <memory>
 #include <utility>
 #include <vector>
@@ -16,8 +17,8 @@ std::vector<std::pair<int, int>> ngb {std::make_pair(-1, -1),
                                       std::make_pair(-1, 1),
                                       std::make_pair(0, 1),
                                       std::make_pair(1, 1)};
-const double SUIT_VAL {0.5};
-const double FOREST_VAL {0.5};
+const double SUIT_VAL {0.15};
+const double FOREST_VAL {0.15};
 
 Agent::Agent(Model& model, int x, int y, int population,
              int fission_threshold, int k, int permanence, int leap_distance) :
@@ -34,7 +35,9 @@ Agent::Agent(Model& model, int x, int y, int population,
             make_mask(leap_distance);
 }
 
-Agent::~Agent() {
+Agent::~Agent() {}
+
+void Agent::abandon_land() {
     model->grid.agents[y][x] = 0;
     model->grid.owner[y][x] = 0;
     for (auto cell: land)
@@ -62,20 +65,18 @@ void Agent::update_land() {
     }
 }
 
-//std::shared_ptr<Agent> Agent::fission() {
-Agent* Agent::fission() {
+std::shared_ptr<Agent> Agent::fission() {
+//Agent* Agent::fission() {
     population /= 2;
-    
+    /*
     Agent* new_agent = new Agent(*model, x, y, population,
                                  fission_threshold, k, permanence,
                                  leap_distance); // leak here REALLLLLLLLLLL
     
-    /*
-    std::shared_ptr<Agent> new_agent = std::make_shared<Agent>(*model, x, y, population,
-                                                               fission_threshold, k, permanence,
-                                                               leap_distance);
     */
-    return new_agent;
+    return std::make_shared<Agent>(*model, x, y, population,
+                                   fission_threshold, k, permanence,
+                                   leap_distance);
 }
 
 void Agent::check_fission() {
@@ -83,18 +84,18 @@ void Agent::check_fission() {
         std::vector<std::pair<int, int>> cells {check_destinations(1)};
         if (cells.size() > 0) {
             std::pair<int, int> best_cell = get_best_cell(cells);
-            Agent* new_agent = fission();
-            model->add(new_agent);
-            //std::shared_ptr<Agent> new_agent = fission();
+            //Agent* new_agent = fission();
+            std::shared_ptr<Agent> new_agent = fission();
             new_agent->move(best_cell.first, best_cell.second);
+            model->add(new_agent);
         } else if (leap_distance > 0) {
             std::vector<std::pair<int, int>> destinations {check_leap_cells()};
             if (destinations.size() > 0) {
                 std::pair<int, int> best_cell = get_best_cell(destinations);
-                Agent* new_agent = fission();
-                model->add(new_agent);
-                //std::shared_ptr<Agent> new_agent = fission();
+                //Agent* new_agent = fission();
+                std::shared_ptr<Agent> new_agent = fission();
                 new_agent->move(best_cell.first, best_cell.second);
+                model->add(new_agent);
             }
         }
     }

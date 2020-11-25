@@ -1,6 +1,8 @@
 #ifndef AGENT_H
 #define AGENT_H
 
+#include <memory>
+
 #include "model.h"
 
 class Model;
@@ -20,8 +22,8 @@ class Agent {
               int fission_threshold, int k, int permanence, int leap_distance);
         ~Agent();
         void grow();
-        Agent* fission();
-        //std::shared_ptr<Agent> fission();
+        //Agent* fission();
+        std::shared_ptr<Agent> fission();
         void check_fission();
         void step();
         void move(int new_x, int new_y);
@@ -37,6 +39,7 @@ class Agent {
         int get_y();
         bool is_alive();
         void make_mask(int radius);
+        void abandon_land();
 };
 
 #endif

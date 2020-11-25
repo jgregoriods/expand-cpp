@@ -14,9 +14,10 @@ class Date;
 class Model {
     public:
         int bp;
-        std::vector<Agent*> agents;
-        //std::vector<std::shared_ptr<Agent>> agents;
-        std::vector<Date*> dates;
+        //std::vector<Agent*> agents;
+        std::vector<std::shared_ptr<Agent>> agents;
+        std::vector<std::shared_ptr<Date>> dates;
+        //std::vector<Date*> dates;
         Grid grid;
         Model(int start_date);
         void load_dates(std::string path);
@@ -26,7 +27,8 @@ class Model {
         void write_snapshot();
         void write_asc();
         double get_score();
-        void add(Agent* agent);
+        //void add(Agent* agent);
+        void add(std::shared_ptr<Agent> agent);
 };
 
 #endif

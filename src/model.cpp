@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream> // remove
 #include <iterator>
+#include <memory>
 #include <sstream>
 #include <string>
 
@@ -18,7 +19,8 @@ Model::Model(int start_date) : bp(start_date) {
 
 void Model::load_dates(std::string path) {
     for (const auto& entry: recursive_directory_iterator(path)) {
-        Date* date = new Date(entry.path());
+        //Date* date = new Date(entry.path());
+        std::shared_ptr<Date> date = std::make_shared<Date>(entry.path());
         dates.push_back(date);
     }
 }
@@ -34,9 +36,12 @@ void Model::update_env() {
 void Model::step(bool write) {
     auto it = agents.begin();
     while (it != agents.end()) {
-        Agent* agent = *it;
+        //Agent* agent = *it;
+        auto agent = *it;
         if (!agent->is_alive()) {
-            delete agent;
+            //delete agent;
+            agent->abandon_land();
+            agent.reset();
             it = agents.erase(it);
         } else {
             agent->step();
@@ -128,6 +133,7 @@ double Model::get_score() {
     return total / dates.size();
 }
 
-void Model::add(Agent* agent) {
-    agents.push_back(agent);
+//void Model::add(Agent* agent) {
+void Model::add(std::shared_ptr<Agent> agent) {
+    agents.push_back(std::move(agent));
 }
