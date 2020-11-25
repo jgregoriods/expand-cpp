@@ -19,6 +19,21 @@ void Genome::mutate() {
     genes[selected]->mutate();
 }
 
+/*
+bool Genome::operator< (const Genome &genome) {
+    return fitness < genome.fitness;
+}
+*/
+
+// CHANGE, THIS IS A DUMMY
+void Genome::measure_fitness() {
+    double sum {};
+    for (auto gene: genes)
+        sum += gene->get_value();
+    fitness = sum;
+}
+
 void Genome::add(std::shared_ptr<Gene> gene) {
     genes.push_back(std::move(gene));
 }
+
