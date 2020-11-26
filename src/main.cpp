@@ -1,6 +1,5 @@
-#include <chrono> //remove
 #include <fstream>
-#include <iomanip> //remove
+#include <iomanip>
 #include <iostream>
 #include <memory>
 #include <sstream>
@@ -13,27 +12,40 @@
 #include "grid.h"
 #include "model.h"
 
-using namespace std::chrono; // remove
+struct Options {
+    int fission_threshold {};
+    int k {};
+    int permanence {};
+    int leap_distance {};
+    Options(std::vector<std::string> args) {
+        for (auto str: args) {
+            if (str.substr(0, 7) == "--fiss=")
+                fission_threshold = std::stoi(str.substr(7, str.length()));
+            else if (str.substr(0, 4) == "--k=")
+                k = std::stoi(str.substr(4, str.length()));
+            else if (str.substr(0, 7) == "--perm=")
+                permanence = std::stoi(str.substr(7, str.length()));
+            else if (str.substr(0, 7) == "--leap=")
+                leap_distance = std::stoi(str.substr(7, str.length()));
+        }
+    }
+};
 
-int main() {
-    auto start = high_resolution_clock::now();
+int main(const int argc, const char* argv[]) {
+    std::vector<std::string> args(argv+1, argv+argc);
+    Options opts(args);
 
     Model model(5000);
-    std::shared_ptr<Agent> agent1 = std::make_shared<Agent>(model, 229, 76, 76, 76, 26, 16, 17);
+    std::shared_ptr<Agent> agent1 = std::make_shared<Agent>(model, 229, 76, opts.fission_threshold,
+                                                            opts.fission_threshold, opts.k, opts.permanence,
+                                                            opts.leap_distance);
     model.add(agent1);
     model.grid.arrival[agent1->get_y()][agent1->get_x()] = model.get_bp();
 
-    std::cout << std::fixed << std::setprecision(4);
     model.load_dates("dates");
 
     model.run(4400);
-    model.write_asc();
-    std::cout << model.get_score() << std::endl;
-
-    auto stop = high_resolution_clock::now();
-    auto duration = duration_cast<microseconds>(stop - start);
-    std::cout << "Runtime: "
-              << duration.count() / 1000000.0 << " seconds" << std::endl;
+    std::cout << std::fixed << std::setprecision(4) << model.get_score() << std::endl;
 
     return 0;
 }

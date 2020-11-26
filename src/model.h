@@ -14,7 +14,7 @@ class Date;
 class Model {
     public:
         Model(int start_date);
-        void run(int n, bool write_files=false);
+        void run(int n, bool write_files=false, bool show_progress=false);
         void step(bool write_files=false);
         void add(std::shared_ptr<Agent> agent);
         void update_env();
