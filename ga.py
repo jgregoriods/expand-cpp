@@ -5,6 +5,7 @@ from tqdm import tqdm
 
 from subprocess import Popen, PIPE
 
+
 class Gene:
     def __init__(self, min_, max_, step):
         self.vals = list(range(min_, max_ + step, step))
@@ -120,8 +121,8 @@ class GA:
 
 
 def main():
-    ga = GA(500, 200, 50, 0.8, 0.2)
-    ga.evolve(20)
+    ga = GA(10, 5, 1, 0.8, 0.2)
+    ga.evolve(3)
 
 
 if __name__ == "__main__":

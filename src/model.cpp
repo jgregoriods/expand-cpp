@@ -1,3 +1,4 @@
+#include <ctime>
 #include <filesystem>
 #include <fstream>
 #include <iostream> // remove
@@ -18,10 +19,15 @@ Model::Model(int start_date) : bp(start_date) {
 }
 
 void Model::run(int n, bool write_files, bool show_progress) {
+    std::time_t timer1, timer2;
+    std::time(&timer1);
     int progress {};
     int k {};
     for (int i {0}; i < n; ++i) {
         step(write_files);
+        std::time(&timer2);
+        if (std::difftime(timer2, timer1) > 180) // STOP IF > 3 MINUTES...
+            break;
         if (show_progress) {
             k++;
             progress = ((double)k / (double)n) * 100;
