@@ -10,14 +10,19 @@ import os
 class App:
     def __init__(self, master):
         self.master = master
-        self.figure = mplfig.Figure(figsize=(6, 9), dpi=75)
+        self.figure = mplfig.Figure(figsize=(9, 9), dpi=60)
         self.ax = self.figure.add_subplot(111)
         self.canvas = tkagg.FigureCanvasTkAgg(self.figure, self.master)
         self.canvas.get_tk_widget().grid(row=2, column=1, columnspan=6,
                                          rowspan=1)
 
+        self.ax.tick_params(axis='both', which='both', bottom=False,
+                            labelbottom=False, left=False, labelleft=False)
+        self.figure.subplots_adjust(left=0, bottom=0.02, right=1, top=0.98,
+                                    wspace=0, hspace=0)
+
         self.toolbar_frame = tk.Frame(self.master)
-        self.toolbar_frame.grid(row=3, column=1, columnspan=5)
+        self.toolbar_frame.grid(row=3, column=1, columnspan=6)
         self.toolbar = tkagg.NavigationToolbar2Tk(self.canvas,
                                                   self.toolbar_frame)
 
@@ -49,7 +54,7 @@ class App:
                                      command=self.rewind)
         self.rewind_button.grid(row=1, column=6)
 
-        self.basemap = np.vstack(np.loadtxt('layers/ele.asc',
+        self.basemap = np.vstack(np.loadtxt('../layers/ele.asc',
                                             skiprows=6).astype(float))
         self.basemap[self.basemap == -9999] = np.nan
         self.current = 0
@@ -62,10 +67,10 @@ class App:
                                 header=None).values
         self.ax.cla()
         self.ax.set_facecolor('black')
-        self.ax.imshow(self.basemap)
-        self.ax.scatter(*zip(*sites), s=1, c='yellow')
+        self.ax.imshow(self.basemap, cmap='gist_earth')
+        self.ax.scatter(*zip(*sites), s=2, c='yellow')
         self.ax.text(580, 70, self.files[self.current][:-4], color='white',
-                     horizontalalignment='right')
+                     horizontalalignment='right', fontsize=14)
         self.canvas.draw()
 
     def play(self):

@@ -1,6 +1,7 @@
 import numpy as np
 import multiprocessing as mp                
 import copy as cp
+from tqdm import tqdm
 
 from subprocess import Popen, PIPE
 
@@ -17,10 +18,10 @@ class Genome:
     def __init__(self, genes = None):
         self.fitness = 'OFF'
 
-        self.genes = genes or [Gene(50, 250, 50),  # Fission
-                               Gene(20, 100, 20),  # Carrying capacity
-                               Gene(10, 30, 10),   # Permanence
-                               Gene(0, 30, 10)]  # Leap
+        self.genes = genes or [Gene(50, 250, 10),   # Fission
+                               Gene(20, 100, 10),   # Carrying capacity
+                               Gene(10, 30, 10),    # Permanence
+                               Gene(0, 30, 5)]     # Leap
 
     def mutate(self, prob):
         if prob > np.random.uniform(0, 1):
@@ -45,6 +46,8 @@ class GA:
         self.prob_cross = prob_cross
         self.prob_mut = prob_mut
         self.population = [Genome() for i in range(self.n_pop)]
+        self.best_scores = []
+        self.mean_scores = []
 
     def run_model(self, genes):
         fiss = genes[0]
@@ -59,7 +62,7 @@ class GA:
         pop_subset = [p for p in self.population if isinstance(p.fitness, str)]
         pop_genes = [i.get_gene_values() for i in pop_subset]
         ############################
-        pool = mp.Pool(8) # n cores
+        pool = mp.Pool(10) # n cores
         ############################
         fitness = np.array(pool.map(self.run_model, pop_genes))
         pool.close()
@@ -98,20 +101,27 @@ class GA:
         return crossovers
 
     def evolve(self, max_it):
-        for it in range(max_it):
+        for it in tqdm(range(max_it)):
             fitness = self.get_fitness()
+            self.mean_scores.append(np.mean(fitness))
+
             parents = self.get_parents(fitness)
+            self.best_scores.append(parents[0].fitness)
+
             crossovers = self.do_crossover(parents)
             mutated = self.do_mutation(crossovers)
             self.population = mutated + [parents[i] for i in range(self.n_elit)]
-            print('========= Iteration: ' + str(it + 1) + ' ==========')
-            for i in parents[0:4]:
-                i.Print()
+
+            best = parents[0].get_gene_values() + [parents[0].fitness]
+            np.savetxt('best.csv', best, delimiter=',')
+
+            scores = np.asarray([self.mean_scores, self.best_scores]).transpose()
+            np.savetxt('scores.csv', scores, delimiter=',')
 
 
 def main():
-    ga = GA(10, 4, 1, 0.8, 0.1)
-    ga.evolve(5)
+    ga = GA(500, 200, 50, 0.8, 0.2)
+    ga.evolve(20)
 
 
 if __name__ == "__main__":

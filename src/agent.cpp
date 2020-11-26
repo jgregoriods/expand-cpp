@@ -16,8 +16,8 @@ std::vector<std::pair<int, int>> Agent::ngb {std::make_pair(-1, -1),
                                              std::make_pair(-1, 1),
                                              std::make_pair(0, 1),
                                              std::make_pair(1, 1)};
-const double SUIT_VAL {0.55};
-const double FOREST_VAL {0.55};
+const double SUIT_VAL {0.6};
+const double FOREST_VAL {0.58};
 
 Agent::Agent(Model& model, int x, int y, int population, int fission_threshold,
              int k, int permanence, int leap_distance) :
