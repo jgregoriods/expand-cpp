@@ -22,7 +22,7 @@ class Agent {
         void move(int new_x, int new_y);
         void abandon_land();
         std::vector<std::pair<int, int>> check_empty_cells();
-        std::vector<std::pair<int, int>> check_destinations(int distance);
+        std::vector<std::pair<int, int>> check_destinations();
         std::vector<std::pair<int, int>> check_leap_cells();
         bool is_suitable(int cell_x, int cell_y, bool own=false);
         std::pair<int, int> get_best_cell(std::vector<std::pair<int, int>> cells);

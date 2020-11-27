@@ -79,7 +79,7 @@ int Model::get_date(int x, int y) {
 }
 
 double Model::get_vegetation(int x, int y) {
-    return grid.veg[y][x];
+    return grid.vegetation[y][x];
 }
 
 int Model::get_elevation(int x, int y) {
@@ -87,7 +87,7 @@ int Model::get_elevation(int x, int y) {
 }
 
 double Model::get_suitability(int x, int y) {
-    return grid.suit[y][x];
+    return grid.suitability[y][x];
 }
 
 void Model::place_agent(int agent_id, int x, int y) {
@@ -108,9 +108,9 @@ int Model::count_agents() {
 
 void Model::update_env() {
     if (bp % 50 == 0) {
-        grid.veg.clear();
+        grid.vegetation.clear();
         std::string filename {"layers/veg" + std::to_string(bp) + ".asc"};
-        grid.veg = grid.add_layer(filename);
+        grid.vegetation = grid.layer_from_file(filename);
     }
 }
 
@@ -141,23 +141,19 @@ void Model::write_snapshot() {
 }
 
 void Model::write_asc() {
-    std::ofstream file3("output/arrival.asc");
-    file3 << "NCOLS 638" << std::endl;
-    file3 << "NROWS 825" << std::endl;
-    file3 << "XLLCORNER -2985163.8955" << std::endl;
-    file3 << "YLLCORNER -3022031.214" << std::endl;
-    file3 << "CELLSIZE 10000" << std::endl;
-    file3 << "NODATA_value -1" << std::endl;
-    std::ostream_iterator<int> it3(file3, "\t");
+    std::ofstream file("output/arrival.asc");
+    file << "NCOLS 638" << std::endl;
+    file << "NROWS 825" << std::endl;
+    file << "XLLCORNER -2985163.8955" << std::endl;
+    file << "YLLCORNER -3022031.214" << std::endl;
+    file << "CELLSIZE 10000" << std::endl;
+    file << "NODATA_value -1" << std::endl;
+    std::ostream_iterator<int> it(file, "\t");
     for (int i {0}; i < grid.arrival.size(); ++i) {
         std::copy(grid.arrival.at(i).begin(),
-                  grid.arrival.at(i).end(), it3);
-        file3 << std::endl;
+                  grid.arrival.at(i).end(), it);
+        file << std::endl;
     }
-}
-
-int Model::get_bp() {
-    return bp;
 }
 
 bool Model::is_in_grid(int x, int y) {

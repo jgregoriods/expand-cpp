@@ -7,23 +7,17 @@
 #include "grid.h"
 
 Grid::Grid(int height, int width) : height(height), width(width) {
-    std::vector<std::vector<int>> agents_v(height, std::vector<int> (width, 0));
-    this->agents = agents_v;
-
-    std::vector<std::vector<int>> owner_v(height, std::vector<int> (width, 0));
-    this->owner = owner_v;
-
-    std::vector<std::vector<int>> arrival_v(height, std::vector<int> (width, -1));
-    this->arrival = arrival_v;
-
-    this->elevation = add_layer("layers/ele.asc");
-    this->suit = add_layer("layers/suit.asc");
-    this->veg = add_layer("layers/veg5000.asc");
+    this->agents = new_layer(0);
+    this->owner = new_layer(0);
+    this->arrival = new_layer(-1);
+    this->elevation = layer_from_file("layers/ele.asc");
+    this->suitability = layer_from_file("layers/suit.asc");
+    this->vegetation = layer_from_file("layers/veg5000.asc");
 }
 
 Grid::Grid() : height(825), width(638) {}
 
-std::vector<std::vector<double>> Grid::add_layer(std::string filename) {
+std::vector<std::vector<double>> Grid::layer_from_file(std::string filename) {
     std::vector<std::vector<double>> v;
     std::ifstream file(filename);
     if (file.is_open()) {
@@ -41,6 +35,11 @@ std::vector<std::vector<double>> Grid::add_layer(std::string filename) {
         }
     }
     file.close();
+    return v;
+}
+
+std::vector<std::vector<int>> Grid::new_layer(int val) {
+    std::vector<std::vector<int>> v(height, std::vector<int>(width, val));
     return v;
 }
 

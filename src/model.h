@@ -32,7 +32,6 @@ class Model {
         double get_score();
         void write_snapshot();
         void write_asc();
-        int get_bp();
         bool is_in_grid(int x, int y);
     private:
         Grid grid;
