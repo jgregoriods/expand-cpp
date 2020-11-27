@@ -132,10 +132,7 @@ void Agent::check_move() {
 
 void Agent::move(int new_x, int new_y) {
     if (model->grid.agents[y][x] == id) {
-        model->grid.agents[y][x] = 0;
-        model->grid.owner[y][x] = 0;
-        for (auto cell: land)
-            model->grid.owner[cell.second][cell.first] = 0;
+        abandon_land();
         land.clear();
         total_k = k;
     }
