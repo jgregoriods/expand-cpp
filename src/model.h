@@ -17,15 +17,25 @@ class Model {
         void run(int n, bool write_files=false, bool show_progress=false);
         void step(bool write_files=false);
         void add(std::shared_ptr<Agent> agent);
+        int get_agent(int x, int y);
+        int get_owner(int x, int y);
+        int get_date(int x, int y);
+        double get_vegetation(int x, int y);
+        int get_elevation(int x, int y);
+        double get_suitability(int x, int y);
+        void place_agent(int agent_id, int x, int y);
+        void set_owner(int owner_id, int x, int y);
+        void record_date(int x, int y);
+        int count_agents();
         void update_env();
         void load_dates(std::string path);
         double get_score();
         void write_snapshot();
         void write_asc();
         int get_bp();
-        int get_n_agents();
-        Grid grid;
+        bool is_in_grid(int x, int y);
     private:
+        Grid grid;
         int bp;
         std::vector<std::shared_ptr<Agent>> agents;
         std::vector<std::shared_ptr<Date>> dates;

@@ -46,7 +46,7 @@ int main(const int argc, const char* argv[]) {
                                                             opts.fission_threshold, opts.k,
                                                             opts.permanence, opts.leap_distance);
     model.add(agent1);
-    model.grid.arrival[agent1->get_y()][agent1->get_x()] = model.get_bp();
+    model.record_date(agent1->get_x(), agent1->get_y());
 
     model.load_dates("dates");
 

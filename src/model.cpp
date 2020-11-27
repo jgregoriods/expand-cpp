@@ -32,8 +32,8 @@ void Model::run(int n, bool write_files, bool show_progress) {
             k++;
             progress = ((double)k / (double)n) * 100;
             std::cout << "\r" << '[' << std::string(progress / 2, '#')
-                    << std::string(50 - (progress / 2), ' ')
-                    << "] " << progress << "%";
+                      << std::string(50 - (progress / 2), ' ')
+                      << "] " << progress << "%";
             std::cout.flush();
         }
     }
@@ -46,10 +46,8 @@ void Model::run(int n, bool write_files, bool show_progress) {
 void Model::step(bool write_files) {
     auto it = agents.begin();
     while (it != agents.end()) {
-        //Agent* agent = *it;
         auto agent = *it;
         if (!agent->is_alive()) {
-            //delete agent;
             agent->abandon_land();
             agent.reset();
             it = agents.erase(it);
@@ -66,6 +64,46 @@ void Model::step(bool write_files) {
 
 void Model::add(std::shared_ptr<Agent> agent) {
     agents.push_back(std::move(agent));
+}
+
+int Model::get_agent(int x, int y) {
+    return grid.agents[y][x];
+}
+
+int Model::get_owner(int x, int y) {
+    return grid.owner[y][x];
+}
+
+int Model::get_date(int x, int y) {
+    return grid.arrival[y][x];
+}
+
+double Model::get_vegetation(int x, int y) {
+    return grid.veg[y][x];
+}
+
+int Model::get_elevation(int x, int y) {
+    return grid.elevation[y][x];
+}
+
+double Model::get_suitability(int x, int y) {
+    return grid.suit[y][x];
+}
+
+void Model::place_agent(int agent_id, int x, int y) {
+    grid.agents[y][x] = agent_id;
+}
+
+void Model::set_owner(int owner_id, int x, int y) {
+    grid.owner[y][x] = owner_id;
+}
+
+void Model::record_date(int x, int y) {
+    grid.arrival[y][x] = bp;
+}
+
+int Model::count_agents() {
+    return agents.size();
 }
 
 void Model::update_env() {
@@ -122,6 +160,9 @@ int Model::get_bp() {
     return bp;
 }
 
-int Model::get_n_agents() {
-    return agents.size();
+bool Model::is_in_grid(int x, int y) {
+    if (x >= 0 && x < grid.width && y >= 0 && y < grid.height)
+        return true;
+    else
+        return false;
 }

@@ -34,9 +34,10 @@ Agent::Agent(Model& model, int x, int y, int population, int fission_threshold,
     time_here(0),
     leap_distance(leap_distance),
     alive(true) {
-        if (model.grid.agents[y][x] == 0 && model.grid.owner[y][x] == 0)
-            model.grid.agents[y][x] = id;
-            model.grid.owner[y][x] = id;
+        if (model.get_agent(x, y) == 0 && model.get_owner(x, y) == 0) {
+            model.place_agent(id, x, y);
+            model.set_owner(id, x, y);
+        }
         land.reserve(9);
         mask.reserve(900);
         if (leap_distance > 0 && mask.size() < 1)
@@ -66,16 +67,15 @@ void Agent::grow() {
     update_land();
 }
 
-
 void Agent::update_land() {
     while (population > total_k) {
-        std::vector<std::pair<int, int>> cells {check_destinations(1)};
+        std::vector<std::pair<int, int>> cells {check_destinations()};
         if (cells.size() > 0) {
             std::pair<int, int> best_cell = get_best_cell(cells);
             land.push_back(best_cell);
-            model->grid.owner[best_cell.second][best_cell.first] = id;
-            if (model->grid.arrival[best_cell.second][best_cell.first] == -1)
-                model->grid.arrival[best_cell.second][best_cell.first] = model->get_bp();
+            model->set_owner(id, best_cell.first, best_cell.second);
+            if (model->get_date(best_cell.first, best_cell.second) == -1)
+                model->record_date(best_cell.first, best_cell.second);
             total_k += k;
         } else {
             population = total_k;
@@ -85,7 +85,7 @@ void Agent::update_land() {
 
 void Agent::check_fission() {
     if (population > fission_threshold) {
-        std::vector<std::pair<int, int>> cells {check_destinations(1)};
+        std::vector<std::pair<int, int>> cells {check_destinations()};
         if (cells.size() > 0) {
             std::pair<int, int> best_cell = get_best_cell(cells);
             std::shared_ptr<Agent> new_agent = fission();
@@ -110,7 +110,7 @@ std::shared_ptr<Agent> Agent::fission() {
 }
 
 void Agent::check_move() {
-    bool forest_here {model->grid.veg[y][x] >= FOREST_VAL};
+    bool forest_here {model->get_vegetation(x, y) >= FOREST_VAL};
     if (time_here > permanence || !forest_here) {
         std::vector<std::pair<int, int>> cells {check_empty_cells()};
         if (cells.size() > 0) {
@@ -121,36 +121,36 @@ void Agent::check_move() {
             if (destinations.size() > 0) {
                 std::pair<int, int> best_cell = get_best_cell(destinations);
                     move(best_cell.first, best_cell.second);
-            } else if (!forest_here && model->get_n_agents() > 1) {
+            } else if (!forest_here && model->count_agents() > 1) {
                 alive = false;
             }
-        } else if (!forest_here && model->get_n_agents() > 1) {
+        } else if (!forest_here && model->count_agents() > 1) {
             alive = false;
         }
     }
 }
 
 void Agent::move(int new_x, int new_y) {
-    if (model->grid.agents[y][x] == id) {
+    if (model->get_agent(x, y) == id) {
         abandon_land();
         land.clear();
         total_k = k;
     }
     x = new_x;
     y = new_y;
-    model->grid.agents[new_y][new_x] = id;
-    model->grid.owner[new_y][new_x] = id;
-    if (model->grid.arrival[new_y][new_x] == -1)
-        model->grid.arrival[new_y][new_x] = model->get_bp();
+    model->place_agent(id, new_x, new_y);
+    model->set_owner(id, new_x, new_y);
+    if (model->get_date(new_x, new_y) == -1)
+        model->record_date(new_x, new_y);
     time_here = 0;
     update_land();
 }
 
 void Agent::abandon_land() {
-    model->grid.agents[y][x] = 0;
-    model->grid.owner[y][x] = 0;
+    model->place_agent(0, x, y);
+    model->set_owner(0, x, y);
     for (auto cell: land)
-        model->grid.owner[cell.second][cell.first] = 0;
+        model->set_owner(0, cell.first, cell.second);
 }
 
 std::vector<std::pair<int, int>> Agent::check_empty_cells() {
@@ -158,31 +158,21 @@ std::vector<std::pair<int, int>> Agent::check_empty_cells() {
     cells.reserve(900);
     for (auto cell: ngb) {
         int i {cell.first}, j {cell.second};
-        if (is_in_grid(x+i, y+j)
-            && (model->grid.owner[y+j][x+i] == 0 || model->grid.owner[y+j][x+i] == id)
-            && model->grid.agents[y+j][x+i] == 0
-            && model->grid.elevation[y+j][x+i] >= 1
-            && model->grid.suit[y+j][x+i] >= SUIT_VAL
-            && model->grid.veg[y+j][x+i] >= FOREST_VAL)
+        if (is_suitable(x+i, y+j)
+            && (model->get_owner(x+i, y+j) == 0
+                || model->get_owner(x+i, y+j) == id))
             cells.push_back(std::make_pair(x+i, y+j));
     }
     return cells;
 }
 
-std::vector<std::pair<int, int>> Agent::check_destinations(int distance) {
+std::vector<std::pair<int, int>> Agent::check_destinations() {
     std::vector<std::pair<int, int>> cells;
     cells.reserve(900);
-    for (int i {-distance}; i <= distance; ++i) {
-        for (int j {-distance}; j <= distance; ++j) {
-            if (is_in_grid(x+i, y+j)
-                && get_distance(x+i, y+j) == distance
-                && model->grid.owner[y+j][x+i] == 0
-                && model->grid.agents[y+j][x+i] == 0
-                && model->grid.elevation[y+j][x+i] >= 1
-                && model->grid.suit[y+j][x+i] >= SUIT_VAL
-                && model->grid.veg[y+j][x+i] >= FOREST_VAL)
-                cells.push_back(std::make_pair(x+i, y+j));
-        }
+    for (auto cell: ngb) {
+        int i {cell.first}, j {cell.second};
+        if (is_suitable(x+i, y+j) && model->get_owner(x+i, y+j) == 0)
+            cells.push_back(std::make_pair(x+i, y+j));
     }
     return cells;
 }
@@ -192,22 +182,28 @@ std::vector<std::pair<int, int>> Agent::check_leap_cells() {
     cells.reserve(900);
     for (auto cell: mask) {
         int i {cell.first}, j {cell.second};
-        if (is_in_grid(x+i, y+j)
-            && model->grid.owner[y+j][x+i] == 0
-            && model->grid.agents[y+j][x+i] == 0
-            && model->grid.elevation[y+j][x+i] >= 1
-            && model->grid.suit[y+j][x+i] >= SUIT_VAL
-            && model->grid.veg[y+j][x+i] >= FOREST_VAL)
+        if (is_suitable(x+i, y+j) && model->get_owner(x+i, y+j) == 0)
             cells.push_back(std::make_pair(x+i, y+j));
     }
     return cells;
+}
+
+bool Agent::is_suitable(int cell_x, int cell_y, bool own) {
+    if (model->is_in_grid(cell_x, cell_y)
+        && model->get_agent(cell_x, cell_y) == 0
+        && model->get_elevation(cell_x, cell_y) >= 1
+        && model->get_suitability(cell_x, cell_y) >= SUIT_VAL
+        && model->get_vegetation(cell_x, cell_y) >= FOREST_VAL)
+        return true;
+    else
+        return false;
 }
 
 std::pair<int, int> Agent::get_best_cell(std::vector<std::pair<int, int>> cells) {
     double best_val {-1};
     std::pair<int, int> best_cell;
     for (auto cell: cells) {
-        double val = model->grid.suit[cell.second][cell.first]; 
+        double val = model->get_suitability(cell.first, cell.second); 
         if (val > best_val) {
             best_val = val;
             best_cell = cell;
@@ -220,11 +216,8 @@ int Agent::get_distance(int x_i, int y_i) {
     return round(sqrt(pow(x - x_i, 2) + pow(y - y_i, 2)));
 }
 
-bool Agent::is_in_grid(int a, int b) {
-    if (a >= 0 && a < model->grid.width && b >= 0 && b < model->grid.height)
-        return true;
-    else
-        return false;
+int Agent::get_id() {
+    return id;
 }
 
 int Agent::get_x() {
