@@ -16,8 +16,6 @@ std::vector<std::pair<int, int>> Agent::ngb {std::make_pair(-1, -1),
                                              std::make_pair(-1, 1),
                                              std::make_pair(0, 1),
                                              std::make_pair(1, 1)};
-const double SUIT_VAL {0.5};
-const double FOREST_VAL {0.5};
 
 Agent::Agent(Model& model, int x, int y, int population, int fission_threshold,
              int k, int permanence, int leap_distance) :
@@ -110,7 +108,7 @@ std::shared_ptr<Agent> Agent::fission() {
 }
 
 void Agent::check_move() {
-    bool forest_here {model->get_vegetation(x, y) >= FOREST_VAL};
+    bool forest_here {model->is_forest(x, y)};
     if (time_here > permanence || !forest_here) {
         std::vector<std::pair<int, int>> cells {check_empty_cells()};
         if (cells.size() > 0) {
@@ -158,7 +156,7 @@ std::vector<std::pair<int, int>> Agent::check_empty_cells() {
     cells.reserve(900);
     for (auto cell: ngb) {
         int i {cell.first}, j {cell.second};
-        if (is_suitable(x+i, y+j)
+        if (model->is_suitable(x+i, y+j)
             && (model->get_owner(x+i, y+j) == 0
                 || model->get_owner(x+i, y+j) == id))
             cells.push_back(std::make_pair(x+i, y+j));
@@ -171,7 +169,7 @@ std::vector<std::pair<int, int>> Agent::check_destinations() {
     cells.reserve(900);
     for (auto cell: ngb) {
         int i {cell.first}, j {cell.second};
-        if (is_suitable(x+i, y+j) && model->get_owner(x+i, y+j) == 0)
+        if (model->is_suitable(x+i, y+j) && model->get_owner(x+i, y+j) == 0)
             cells.push_back(std::make_pair(x+i, y+j));
     }
     return cells;
@@ -182,22 +180,24 @@ std::vector<std::pair<int, int>> Agent::check_leap_cells() {
     cells.reserve(900);
     for (auto cell: mask) {
         int i {cell.first}, j {cell.second};
-        if (is_suitable(x+i, y+j) && model->get_owner(x+i, y+j) == 0)
+        if (model->is_suitable(x+i, y+j) && model->get_owner(x+i, y+j) == 0)
             cells.push_back(std::make_pair(x+i, y+j));
     }
     return cells;
 }
 
+/*
 bool Agent::is_suitable(int cell_x, int cell_y, bool own) {
     if (model->is_in_grid(cell_x, cell_y)
         && model->get_agent(cell_x, cell_y) == 0
-        && model->get_elevation(cell_x, cell_y) >= 1
+        //&& model->get_elevation(cell_x, cell_y) >= 1
         && model->get_suitability(cell_x, cell_y) >= SUIT_VAL
         && model->get_vegetation(cell_x, cell_y) >= FOREST_VAL)
         return true;
     else
         return false;
 }
+*/
 
 std::pair<int, int> Agent::get_best_cell(std::vector<std::pair<int, int>> cells) {
     double best_val {-1};

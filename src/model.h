@@ -13,7 +13,9 @@ class Date;
 
 class Model {
     public:
-        Model(int start_date);
+        Model();
+        void setup(int start_date, int init_x, int init_y, int fission_threshold,
+                   int k, int permanence, int leap_distance);
         void run(int n, bool write_files=false, bool show_progress=false);
         void step(bool write_files=false);
         void add(std::shared_ptr<Agent> agent);
@@ -33,6 +35,8 @@ class Model {
         void write_snapshot();
         void write_asc();
         bool is_in_grid(int x, int y);
+        bool is_suitable(int x, int y);
+        bool is_forest(int x, int y);
     private:
         Grid grid;
         int bp;

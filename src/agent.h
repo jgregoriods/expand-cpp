@@ -24,7 +24,7 @@ class Agent {
         std::vector<std::pair<int, int>> check_empty_cells();
         std::vector<std::pair<int, int>> check_destinations();
         std::vector<std::pair<int, int>> check_leap_cells();
-        bool is_suitable(int cell_x, int cell_y, bool own=false);
+        //bool is_suitable(int cell_x, int cell_y, bool own=false);
         std::pair<int, int> get_best_cell(std::vector<std::pair<int, int>> cells);
         int get_distance(int x_i, int y_i);
         int get_id();

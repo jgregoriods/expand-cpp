@@ -11,11 +11,23 @@
 
 using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
 
-Model::Model(int start_date) : bp(start_date) {
+const double SUIT_VAL {0.482};
+const double FOREST_VAL {0.58};
+
+Model::Model() {
     Grid new_grid(825, 638);
     grid = new_grid;
     agents.reserve(500000);
     dates.reserve(100);
+}
+
+void Model::setup(int start_date, int init_x, int init_y, int fission_threshold,
+                  int k, int permanence, int leap_distance) {
+    bp = start_date;
+    std::shared_ptr<Agent> agent = std::make_shared<Agent>(*this, init_x, init_y, fission_threshold,
+                                                           fission_threshold, k, permanence, leap_distance);
+    add(agent);
+    record_date(init_x, init_y);
 }
 
 void Model::run(int n, bool write_files, bool show_progress) {
@@ -158,6 +170,21 @@ void Model::write_asc() {
 
 bool Model::is_in_grid(int x, int y) {
     if (x >= 0 && x < grid.width && y >= 0 && y < grid.height)
+        return true;
+    else
+        return false;
+}
+
+bool Model::is_forest(int x, int y) {
+    return grid.vegetation[y][x] >= FOREST_VAL;
+}
+
+bool Model::is_suitable(int x, int y) {
+    if (is_in_grid(x, y)
+        && grid.agents[y][x] == 0
+        //&& model->get_elevation(cell_x, cell_y) >= 1
+        && grid.suitability[y][x] >= SUIT_VAL
+        && grid.vegetation[y][x] >= FOREST_VAL)
         return true;
     else
         return false;
