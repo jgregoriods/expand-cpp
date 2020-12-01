@@ -13,6 +13,7 @@ Grid::Grid(int height, int width) : height(height), width(width) {
     this->elevation = layer_from_file("layers/ele.asc");
     this->suitability = layer_from_file("layers/trop.asc");
     this->vegetation = layer_from_file("layers/veg5000.asc");
+    this->hg = layer_from_file("layers/hg.asc");
 }
 
 Grid::Grid() : height(825), width(638) {}

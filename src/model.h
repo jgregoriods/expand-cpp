@@ -37,6 +37,7 @@ class Model {
         bool is_in_grid(int x, int y);
         bool is_suitable(int x, int y);
         bool is_forest(int x, int y);
+        int get_hg(int x, int y);
     private:
         Grid grid;
         int bp;

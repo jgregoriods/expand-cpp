@@ -120,7 +120,7 @@ int Model::count_agents() {
 
 void Model::update_env() {
     if (bp % 50 == 0) {
-        grid.vegetation.clear();
+        //grid.vegetation.clear();
         std::string filename {"layers/veg" + std::to_string(bp) + ".asc"};
         grid.vegetation = grid.layer_from_file(filename);
     }
@@ -188,4 +188,14 @@ bool Model::is_suitable(int x, int y) {
         return true;
     else
         return false;
+}
+
+int Model::get_hg(int x, int y) {
+    if (grid.hg[y][x] > 0) {
+        int pop = grid.hg[y][x];
+        grid.hg[y][x] = 0;
+        return pop;
+    } else {
+        return 0;
+    }
 }

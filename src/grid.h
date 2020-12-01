@@ -20,6 +20,7 @@ class Grid {
         std::vector<std::vector<double>> elevation;
         std::vector<std::vector<double>> suitability;
         std::vector<std::vector<double>> vegetation;
+        std::vector<std::vector<double>> hg;
 };
 
 #endif

@@ -54,10 +54,12 @@ void Agent::make_mask(int radius) {
 }
 
 void Agent::step() {
-    grow();
-    check_fission();
-    check_move();
-    time_here++;
+    if (alive) {
+        grow();
+        check_fission();
+        check_move();
+        time_here++;
+    }
 }
 
 void Agent::grow() {
@@ -75,6 +77,7 @@ void Agent::update_land() {
             if (model->get_date(best_cell.first, best_cell.second) == -1)
                 model->record_date(best_cell.first, best_cell.second);
             total_k += k;
+            //convert(best_cell.first, best_cell.second);
         } else {
             population = total_k;
         }
@@ -142,6 +145,7 @@ void Agent::move(int new_x, int new_y) {
         model->record_date(new_x, new_y);
     time_here = 0;
     update_land();
+    //convert(x, y);
 }
 
 void Agent::abandon_land() {
@@ -230,4 +234,9 @@ int Agent::get_y() {
 
 bool Agent::is_alive() {
     return alive;
+}
+
+void Agent::convert(int cell_x, int cell_y) {
+    int converted = model->get_hg(cell_x, cell_y);
+    population += converted;
 }

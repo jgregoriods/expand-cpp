@@ -13,11 +13,11 @@
 #include "model.h"
 
 struct Options {
-    int start_date {};
-    int fission_threshold {};
-    int k {};
-    int permanence {};
-    int leap_distance {};
+    int start_date {5000};
+    int fission_threshold {100};
+    int k {20};
+    int permanence {10};
+    int leap_distance {15};
     bool show_bar {false};
     bool write_files {false};
     Options(std::vector<std::string> args) {
