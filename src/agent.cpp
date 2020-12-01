@@ -18,7 +18,7 @@ std::vector<std::pair<int, int>> Agent::ngb {std::make_pair(-1, -1),
                                              std::make_pair(1, 1)};
 
 Agent::Agent(Model& model, int x, int y, int population, int fission_threshold,
-             int k, int permanence, int leap_distance) :
+             int k, int permanence, int leap_distance, bool diffuse) :
     id(new_id++),
     model(&model),
     x(x),
@@ -31,6 +31,7 @@ Agent::Agent(Model& model, int x, int y, int population, int fission_threshold,
     permanence(permanence),
     time_here(0),
     leap_distance(leap_distance),
+    diffuse(diffuse),
     alive(true) {
         if (model.get_agent(x, y) == 0 && model.get_owner(x, y) == 0) {
             model.place_agent(id, x, y);
@@ -77,7 +78,8 @@ void Agent::update_land() {
             if (model->get_date(best_cell.first, best_cell.second) == -1)
                 model->record_date(best_cell.first, best_cell.second);
             total_k += k;
-            //convert(best_cell.first, best_cell.second);
+            if (diffuse)
+                convert_hg(best_cell.first, best_cell.second);
         } else {
             population = total_k;
         }
@@ -107,7 +109,7 @@ void Agent::check_fission() {
 std::shared_ptr<Agent> Agent::fission() {
     population /= 2;
     return std::make_shared<Agent>(*model, x, y, population, fission_threshold,
-                                   k, permanence, leap_distance);
+                                   k, permanence, leap_distance, diffuse);
 }
 
 void Agent::check_move() {
@@ -144,8 +146,9 @@ void Agent::move(int new_x, int new_y) {
     if (model->get_date(new_x, new_y) == -1)
         model->record_date(new_x, new_y);
     time_here = 0;
+    if (diffuse)
+        absorb_hg(new_x, new_y);
     update_land();
-    //convert(x, y);
 }
 
 void Agent::abandon_land() {
@@ -236,7 +239,15 @@ bool Agent::is_alive() {
     return alive;
 }
 
-void Agent::convert(int cell_x, int cell_y) {
+void Agent::absorb_hg(int cell_x, int cell_y) {
     int converted = model->get_hg(cell_x, cell_y);
     population += converted;
+}
+
+void Agent::convert_hg(int cell_x, int cell_y) {
+    int converted = model->get_hg(cell_x, cell_y);
+    auto agent = std::make_shared<Agent>(*model, cell_x, cell_y, converted,
+                                         fission_threshold, k, permanence,
+                                         leap_distance, diffuse);
+    model->add(agent);
 }

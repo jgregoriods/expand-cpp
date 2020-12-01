@@ -10,7 +10,7 @@ class Model;
 class Agent {
     public:
         Agent(Model& model, int x, int y, int population, int fission_threshold,
-              int k, int permanence, int leap_distance);
+              int k, int permanence, int leap_distance, double diffusion);
         ~Agent();
         void make_mask(int radius);
         void step();
@@ -31,7 +31,8 @@ class Agent {
         int get_x();
         int get_y();
         bool is_alive();
-        void convert(int cell_x, int cell_y);
+        void absorb_hg(int cell_x, int cell_y);
+        void convert_hg(int cell_x, int cell_y);
     private:
         static int new_id;
         static std::vector<std::pair<int, int>> mask;
@@ -49,6 +50,7 @@ class Agent {
         int time_here;
         int leap_distance;
         bool alive;
+        bool diffuse;
         std::vector<std::pair<int, int>> land;
 };
 
