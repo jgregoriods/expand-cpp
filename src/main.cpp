@@ -20,7 +20,7 @@ struct Options {
     int leap_distance {15};
     bool show_bar {false};
     bool write_files {false};
-    bool diffuse {false};
+    double diffusion {0.0};
     Options(std::vector<std::string> args) {
         for (auto str: args) {
             if (str.substr(0, 7) == "--date=")
@@ -33,8 +33,8 @@ struct Options {
                 permanence = std::stoi(str.substr(7, str.length()));
             else if (str.substr(0, 7) == "--leap=")
                 leap_distance = std::stoi(str.substr(7, str.length()));
-            else if (str == "--diffuse")
-                diffuse = true;
+            else if (str.substr(0, 7) == "--diff=")
+                diffusion = std::stod(str.substr(7, str.length()));
             else if (str == "--show-bar")
                 show_bar = true;
             else if (str == "--write")
@@ -48,7 +48,7 @@ int main(const int argc, const char* argv[]) {
     Options opts(args);
     Model model;
     model.setup(opts.start_date, 229, 76, opts.fission_threshold,
-                opts.k, opts.permanence, opts.leap_distance, opts.diffuse);
+                opts.k, opts.permanence, opts.leap_distance, opts.diffusion);
     model.run(4400, opts.write_files, opts.show_bar);
     model.load_dates("dates");
     std::cout << std::fixed << std::setprecision(4) << model.get_score() << std::endl;

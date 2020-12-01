@@ -22,11 +22,11 @@ Model::Model() {
 }
 
 void Model::setup(int start_date, int init_x, int init_y, int fission_threshold,
-                  int k, int permanence, int leap_distance, bool diffuse) {
+                  int k, int permanence, int leap_distance, double diffusion) {
     bp = start_date;
     std::shared_ptr<Agent> agent = std::make_shared<Agent>(*this, init_x, init_y, fission_threshold,
                                                            fission_threshold, k, permanence, leap_distance,
-                                                           diffuse);
+                                                           diffusion);
     add(agent);
     record_date(init_x, init_y);
 }

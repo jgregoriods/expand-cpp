@@ -50,7 +50,7 @@ class Agent {
         int time_here;
         int leap_distance;
         bool alive;
-        bool diffuse;
+        double diffusion;
         std::vector<std::pair<int, int>> land;
 };
 
