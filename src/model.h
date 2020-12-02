@@ -14,7 +14,7 @@ class Date;
 class Model {
     public:
         Model();
-        void setup(int start_date, int init_x, int init_y, int fission_threshold,
+        void setup(int start_date, std::vector<std::pair<int, int>> coords, int fission_threshold,
                    int k, int permanence, int leap_distance, double diffusion);
         void run(int n, bool write_files=false, bool show_progress=false);
         void step(bool write_files=false);
@@ -38,6 +38,8 @@ class Model {
         bool is_suitable(int x, int y);
         bool is_forest(int x, int y);
         int get_hg(int x, int y);
+        void set_hg(int x, int y, int num);
+        std::pair<int, int> to_grid(double x, double y);
     private:
         Grid grid;
         int bp;

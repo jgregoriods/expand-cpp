@@ -64,11 +64,13 @@ class App:
 
     def plot_model(self):
         sites = pandas.read_csv(f'snapshots/{self.files[self.current]}',
-                                header=None).values
+                                header=None).loc[:,:1].values
+        types = pandas.read_csv(f'snapshots/{self.files[self.current]}',
+                                header=None).loc[:,2].values
         self.ax.cla()
         self.ax.set_facecolor('black')
         self.ax.imshow(self.basemap, cmap='gist_earth')
-        self.ax.scatter(*zip(*sites), s=2, c='yellow')
+        self.ax.scatter(*zip(*sites), s=2, c=types, cmap='autumn_r')
         self.ax.text(580, 70, self.files[self.current][:-4], color='white',
                      horizontalalignment='right', fontsize=14)
         self.canvas.draw()

@@ -1,3 +1,4 @@
+#include <iostream> // remove
 #include <cmath>
 #include <memory>
 #include <utility>
@@ -32,12 +33,14 @@ Agent::Agent(Model& model, int x, int y, int population, int fission_threshold,
     time_here(0),
     leap_distance(leap_distance),
     diffusion(diffusion),
+    breed(0),
     alive(true) {
+        land.reserve(9);
         if (model.get_agent(x, y) == 0 && model.get_owner(x, y) == 0) {
             model.place_agent(id, x, y);
             model.set_owner(id, x, y);
+            //land.push_back(std::make_pair(x, y));
         }
-        land.reserve(9);
         mask.reserve(900);
         if (leap_distance > 0 && mask.size() < 1)
             make_mask(leap_distance);
@@ -55,12 +58,10 @@ void Agent::make_mask(int radius) {
 }
 
 void Agent::step() {
-    if (alive) {
-        grow();
-        check_fission();
-        check_move();
-        time_here++;
-    }
+    grow();
+    check_fission();
+    check_move();
+    time_here++;
 }
 
 void Agent::grow() {
@@ -78,8 +79,6 @@ void Agent::update_land() {
             if (model->get_date(best_cell.first, best_cell.second) == -1)
                 model->record_date(best_cell.first, best_cell.second);
             total_k += k;
-            if (diffusion > 0)
-                convert_hg(best_cell.first, best_cell.second);
         } else {
             population = total_k;
         }
@@ -92,6 +91,7 @@ void Agent::check_fission() {
         if (cells.size() > 0) {
             std::pair<int, int> best_cell = get_best_cell(cells);
             std::shared_ptr<Agent> new_agent = fission();
+            //new_agent->breed = breed;
             new_agent->move(best_cell.first, best_cell.second);
             model->add(new_agent);
         } else if (leap_distance > 0) {
@@ -99,6 +99,7 @@ void Agent::check_fission() {
             if (destinations.size() > 0) {
                 std::pair<int, int> best_cell = get_best_cell(destinations);
                 std::shared_ptr<Agent> new_agent = fission();
+                //new_agent->breed = breed;
                 new_agent->move(best_cell.first, best_cell.second);
                 model->add(new_agent);
             }
@@ -143,12 +144,13 @@ void Agent::move(int new_x, int new_y) {
     y = new_y;
     model->place_agent(id, new_x, new_y);
     model->set_owner(id, new_x, new_y);
+    //land.push_back(std::make_pair(new_x, new_y));
     if (model->get_date(new_x, new_y) == -1)
         model->record_date(new_x, new_y);
     time_here = 0;
-    if (diffusion > 0)
-        absorb_hg(new_x, new_y);
     update_land();
+    if (diffusion > 0)
+        convert_hg();
 }
 
 void Agent::abandon_land() {
@@ -173,7 +175,7 @@ std::vector<std::pair<int, int>> Agent::check_empty_cells() {
 
 std::vector<std::pair<int, int>> Agent::check_destinations() {
     std::vector<std::pair<int, int>> cells;
-    cells.reserve(900);
+    cells.reserve(9);
     for (auto cell: ngb) {
         int i {cell.first}, j {cell.second};
         if (model->is_suitable(x+i, y+j) && model->get_owner(x+i, y+j) == 0)
@@ -239,15 +241,15 @@ bool Agent::is_alive() {
     return alive;
 }
 
-void Agent::absorb_hg(int cell_x, int cell_y) {
-    int converted = model->get_hg(cell_x, cell_y);
-    population += converted;
-}
-
-void Agent::convert_hg(int cell_x, int cell_y) {
-    int converted = model->get_hg(cell_x, cell_y);
-    auto agent = std::make_shared<Agent>(*model, cell_x, cell_y, converted,
-                                         fission_threshold, k, permanence,
-                                         leap_distance, diffusion);
-    model->add(agent);
+void Agent::convert_hg() {
+    int total {};
+    for (auto cell: land) {
+        int hg = model->get_hg(cell.first, cell.second);
+        if (hg > 0) {
+            int converted = ceil(diffusion * (double)hg);
+            total += converted;
+            model->set_hg(cell.first, cell.second, hg - converted);
+        }
+    }
+    population += total;
 }

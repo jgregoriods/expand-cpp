@@ -11,8 +11,8 @@
 
 using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
 
-const double SUIT_VAL {0.482};
-const double FOREST_VAL {0.58};
+const double SUIT_VAL {0.4};//{0.482};
+const double FOREST_VAL {0.5};
 
 Model::Model() {
     Grid new_grid(825, 638);
@@ -21,14 +21,16 @@ Model::Model() {
     dates.reserve(100);
 }
 
-void Model::setup(int start_date, int init_x, int init_y, int fission_threshold,
+void Model::setup(int start_date, std::vector<std::pair<int, int>> coords, int fission_threshold,
                   int k, int permanence, int leap_distance, double diffusion) {
     bp = start_date;
-    std::shared_ptr<Agent> agent = std::make_shared<Agent>(*this, init_x, init_y, fission_threshold,
+    for (auto coord: coords) {
+        std::shared_ptr<Agent> agent = std::make_shared<Agent>(*this, coord.first, coord.second, fission_threshold,
                                                            fission_threshold, k, permanence, leap_distance,
                                                            diffusion);
-    add(agent);
-    record_date(init_x, init_y);
+        add(agent);
+        record_date(coord.first, coord.second);
+    }
 }
 
 void Model::run(int n, bool write_files, bool show_progress) {
@@ -149,7 +151,7 @@ void Model::write_snapshot() {
     std::ofstream file;
     file.open(filename);
     for (auto agent: agents)
-        file << agent->get_x() << ", " << agent->get_y() << "\n";
+        file << agent->get_x() << ", " << agent->get_y() <<  ", " << agent->breed << "\n";
     file.close();
 }
 
@@ -192,11 +194,13 @@ bool Model::is_suitable(int x, int y) {
 }
 
 int Model::get_hg(int x, int y) {
-    if (grid.hg[y][x] > 0) {
-        int pop = grid.hg[y][x];
-        grid.hg[y][x] = 0;
-        return pop;
-    } else {
-        return 0;
-    }
+    return grid.hg[y][x];
+}
+
+void Model::set_hg(int x, int y, int num) {
+    grid.hg[y][x] = num;
+}
+
+std::pair<int, int> Model::to_grid(double x, double y) {
+    return grid.to_grid(x, y);
 }

@@ -31,8 +31,8 @@ class Agent {
         int get_x();
         int get_y();
         bool is_alive();
-        void absorb_hg(int cell_x, int cell_y);
-        void convert_hg(int cell_x, int cell_y);
+        void convert_hg();
+        int breed;
     private:
         static int new_id;
         static std::vector<std::pair<int, int>> mask;
