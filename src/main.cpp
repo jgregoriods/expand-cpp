@@ -49,11 +49,11 @@ int main(const int argc, const char* argv[]) {
     Model model;
     std::vector<std::pair<int, int>> coords {};
     coords.push_back(model.to_grid(-691710.658957183, 4458567.75751303));
-    coords.push_back(model.to_grid(-1546664.57537706, 2417295.27500477));
+    coords.push_back(model.to_grid(-1486664.57537706, 2417295.27500477));
     model.setup(opts.start_date, coords,
                 opts.fission_threshold, opts.k, opts.permanence,
                 opts.leap_distance, opts.diffusion);
-    model.run(2000, opts.write_files, opts.show_bar);
+    model.run(4400, opts.write_files, opts.show_bar);
     model.load_dates("dates");
     std::cout << std::fixed << std::setprecision(4) << model.get_score() << std::endl;
     return 0;

@@ -11,8 +11,8 @@
 
 using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
 
-const double SUIT_VAL {0.4};//{0.482};
-const double FOREST_VAL {0.5};
+const double SUIT_VAL {0.361};//{0.482};
+const double FOREST_VAL {0.0};
 
 Model::Model() {
     Grid new_grid(825, 638);
@@ -122,7 +122,8 @@ int Model::count_agents() {
 }
 
 void Model::update_env() {
-    if (bp % 50 == 0) {
+    //if (bp % 50 == 0) {
+    if (bp % 100 == 0) {
         //grid.vegetation.clear();
         std::string filename {"layers/veg" + std::to_string(bp) + ".asc"};
         grid.vegetation = grid.layer_from_file(filename);
