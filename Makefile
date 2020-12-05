@@ -1,7 +1,7 @@
 TARGET = expand
 
 CC = g++
-CFLAGS = --std=c++17
+CFLAGS = -Ofast --std=c++17
 LINKER = g++
 
 SRCDIR = src

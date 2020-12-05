@@ -17,7 +17,7 @@ class Agent {
         void grow();
         void update_land();
         void check_fission();
-        std::shared_ptr<Agent> fission();
+        std::unique_ptr<Agent> fission();
         void check_move();
         void move(int new_x, int new_y);
         void abandon_land();

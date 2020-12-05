@@ -12,7 +12,7 @@
 using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
 
 const double SUIT_VAL {0.419};//{0.482};
-const double FOREST_VAL {0.5};
+const double FOREST_VAL {0.4};
 
 Model::Model() {
     Grid new_grid(825, 638);
@@ -25,7 +25,7 @@ void Model::setup(int start_date, std::vector<std::pair<int, int>> coords, int f
                   int k, int permanence, int leap_distance, double diffusion) {
     bp = start_date;
     for (auto coord: coords) {
-        std::shared_ptr<Agent> agent = std::make_shared<Agent>(*this, coord.first, coord.second, fission_threshold,
+        std::unique_ptr<Agent> agent = std::make_unique<Agent>(*this, coord.first, coord.second, fission_threshold,
                                                            fission_threshold, k, permanence, leap_distance,
                                                            diffusion);
         add(agent);
@@ -61,7 +61,7 @@ void Model::run(int n, bool write_files, bool show_progress) {
 void Model::step(bool write_files) {
     auto it = agents.begin();
     while (it != agents.end()) {
-        auto agent = *it;
+        auto& agent = *it;
         if (!agent->is_alive()) {
             agent->abandon_land();
             agent.reset();
@@ -77,7 +77,7 @@ void Model::step(bool write_files) {
         write_snapshot();
 }
 
-void Model::add(std::shared_ptr<Agent> agent) {
+void Model::add(std::unique_ptr<Agent>& agent) {
     agents.push_back(std::move(agent));
 }
 
@@ -132,14 +132,14 @@ void Model::update_env() {
 
 void Model::load_dates(std::string path) {
     for (const auto& entry: recursive_directory_iterator(path)) {
-        std::shared_ptr<Date> date = std::make_shared<Date>(entry.path());
-        dates.push_back(date);
+        std::unique_ptr<Date> date = std::make_unique<Date>(entry.path());
+        dates.push_back(std::move(date));
     }
 }
 
 double Model::get_score() {
     double total {};
-    for (auto date: dates) {
+    for (auto& date: dates) {
         std::pair<int, int> cell {grid.to_grid(date->get_x(), date->get_y())};
         int sim_bp {grid.arrival[cell.second][cell.first]};
         total += date->get_prob(sim_bp);
@@ -151,7 +151,7 @@ void Model::write_snapshot() {
     std::string filename {"python/snapshots/" + std::to_string(bp) + ".csv"};
     std::ofstream file;
     file.open(filename);
-    for (auto agent: agents)
+    for (auto& agent: agents)
         file << agent->get_x() << ", " << agent->get_y() <<  ", " << agent->breed << "\n";
     file.close();
 }

@@ -18,7 +18,7 @@ class Model {
                    int k, int permanence, int leap_distance, double diffusion);
         void run(int n, bool write_files=false, bool show_progress=false);
         void step(bool write_files=false);
-        void add(std::shared_ptr<Agent> agent);
+        void add(std::unique_ptr<Agent>& agent);
         int get_agent(int x, int y);
         int get_owner(int x, int y);
         int get_date(int x, int y);
@@ -43,8 +43,8 @@ class Model {
     private:
         Grid grid;
         int bp;
-        std::vector<std::shared_ptr<Agent>> agents;
-        std::vector<std::shared_ptr<Date>> dates;
+        std::vector<std::unique_ptr<Agent>> agents;
+        std::vector<std::unique_ptr<Date>> dates;
 };
 
 #endif

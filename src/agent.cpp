@@ -90,7 +90,7 @@ void Agent::check_fission() {
         std::vector<std::pair<int, int>> cells {check_destinations()};
         if (cells.size() > 0) {
             std::pair<int, int> best_cell = get_best_cell(cells);
-            std::shared_ptr<Agent> new_agent = fission();
+            std::unique_ptr<Agent> new_agent = fission();
             //new_agent->breed = breed;
             new_agent->move(best_cell.first, best_cell.second);
             model->add(new_agent);
@@ -98,7 +98,7 @@ void Agent::check_fission() {
             std::vector<std::pair<int, int>> destinations {check_leap_cells()};
             if (destinations.size() > 0) {
                 std::pair<int, int> best_cell = get_best_cell(destinations);
-                std::shared_ptr<Agent> new_agent = fission();
+                std::unique_ptr<Agent> new_agent = fission();
                 //new_agent->breed = breed;
                 new_agent->move(best_cell.first, best_cell.second);
                 model->add(new_agent);
@@ -107,10 +107,11 @@ void Agent::check_fission() {
     }
 }
 
-std::shared_ptr<Agent> Agent::fission() {
+std::unique_ptr<Agent> Agent::fission() {
     population /= 2;
-    return std::make_shared<Agent>(*model, x, y, population, fission_threshold,
-                                   k, permanence, leap_distance, diffusion);
+    std::unique_ptr<Agent> agent = std::make_unique<Agent>(*model, x, y, population, fission_threshold,
+                                                           k, permanence, leap_distance, diffusion);
+    return std::move(agent);
 }
 
 void Agent::check_move() {
