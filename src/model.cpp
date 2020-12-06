@@ -12,7 +12,7 @@
 using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
 
 const double SUIT_VAL {0.419};//{0.482};
-const double FOREST_VAL {0.4};
+const double FOREST_VAL {0.5};
 
 Model::Model() {
     Grid new_grid(825, 638);
