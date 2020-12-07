@@ -11,9 +11,9 @@ Grid::Grid(int height, int width) : height(height), width(width) {
     this->owner = new_layer(0);
     this->arrival = new_layer(-1);
     this->elevation = layer_from_file("layers/ele.asc");
-    this->suitability = layer_from_file("layers/trop_ele.asc");
-    this->vegetation = layer_from_file("layers/veg5000.asc");
-    this->hg = layer_from_file("layers/hg.asc");
+    this->suitability = layer_from_file("layers/suit_drivs.asc");
+    this->vegetation = layer_from_file("layers/veg/veg5000.asc");
+    this->hg = layer_from_file("layers/forager_drivs.asc");
 }
 
 Grid::Grid() : height(825), width(638) {}
