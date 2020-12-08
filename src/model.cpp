@@ -1,7 +1,7 @@
 #include <ctime>
 #include <filesystem>
 #include <fstream>
-#include <iostream> // remove
+#include <iostream>
 #include <iterator>
 #include <memory>
 #include <sstream>
@@ -11,12 +11,11 @@
 
 using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
 
-const double SUIT_VAL {0.25};
-const double FOREST_VAL {0.4};
-
-Model::Model(std::string culture, int start_date) :
+Model::Model(std::string culture, int start_date, double maxent, double forest) :
     culture(culture),
-    bp(start_date) {
+    bp(start_date),
+    SUIT_VAL(maxent),
+    FOREST_VAL(forest) {
         Grid new_grid(825, 638, culture, start_date);
         grid = new_grid;
         agents.reserve(500000);
@@ -192,4 +191,20 @@ bool Model::is_suitable(int x, int y) {
 
 std::pair<int, int> Model::to_grid(double x, double y) {
     return grid.to_grid(x, y);
+}
+
+std::pair<double, double> Model::get_coords(std::string site_name) {
+    std::ifstream file("coords/coords.txt");
+    std::string line;
+    while (std::getline(file, line)) {
+        std::stringstream split(line);
+        std::string name;
+        double x, y;
+        split >> name;
+        if (name == site_name) {
+            split >> x >> y;
+            return std::make_pair(x, y);
+        }
+    }
+    return std::make_pair(0.0, 0.0);
 }

@@ -14,7 +14,7 @@ class Grid;
 
 class Model {
     public:
-        Model(std::string culture, int start_date);
+        Model(std::string culture, int start_date, double maxent, double forest);
         void setup(std::pair<int, int> coords, int fission_threshold, int k,
                    int permanence, int leap_distance);
         void run(int n, bool write_files=false, bool show_progress=false);
@@ -39,7 +39,10 @@ class Model {
         bool is_suitable(int x, int y);
         bool is_forest(int x, int y);
         std::pair<int, int> to_grid(double x, double y);
+        std::pair<double, double> get_coords(std::string site_name);
     private:
+        double SUIT_VAL;
+        double FOREST_VAL;
         std::string culture;
         Grid grid;
         int bp;
