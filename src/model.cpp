@@ -11,26 +11,24 @@
 
 using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
 
-const double SUIT_VAL {0.5};
-const double FOREST_VAL {0.5};
+const double SUIT_VAL {0.25};
+const double FOREST_VAL {0.4};
 
-Model::Model() {
-    Grid new_grid(825, 638);
-    grid = new_grid;
-    agents.reserve(500000);
-    dates.reserve(100);
+Model::Model(std::string culture, int start_date) :
+    culture(culture),
+    bp(start_date) {
+        Grid new_grid(825, 638, culture, start_date);
+        grid = new_grid;
+        agents.reserve(500000);
+        dates.reserve(100);
 }
 
-void Model::setup(int start_date, std::vector<std::pair<int, int>> coords, int fission_threshold,
-                  int k, int permanence, int leap_distance, double diffusion) {
-    bp = start_date;
-    for (auto coord: coords) {
-        std::unique_ptr<Agent> agent = std::make_unique<Agent>(*this, coord.first, coord.second, fission_threshold,
-                                                           fission_threshold, k, permanence, leap_distance,
-                                                           diffusion);
-        add(agent);
-        record_date(coord.first, coord.second);
-    }
+void Model::setup(std::pair<int, int> coords, int fission_threshold,
+                  int k, int permanence, int leap_distance) {
+    auto agent = std::make_unique<Agent>(*this, coords.first, coords.second, fission_threshold,
+                                         fission_threshold, k, permanence, leap_distance);
+    add(agent);
+    record_date(coords.first, coords.second);
 }
 
 void Model::run(int n, bool write_files, bool show_progress) {
@@ -122,15 +120,14 @@ int Model::count_agents() {
 }
 
 void Model::update_env() {
-    //if (bp % 50 == 0) {
     if (bp % 100 == 0) {
-        //grid.vegetation.clear();
         std::string filename {"layers/veg/veg" + std::to_string(bp) + ".asc"};
         grid.vegetation = grid.layer_from_file(filename);
     }
 }
 
-void Model::load_dates(std::string path) {
+void Model::load_dates() {
+    std::string path {"dates/" + culture};
     for (const auto& entry: recursive_directory_iterator(path)) {
         std::unique_ptr<Date> date = std::make_unique<Date>(entry.path());
         dates.push_back(std::move(date));
@@ -186,20 +183,11 @@ bool Model::is_forest(int x, int y) {
 bool Model::is_suitable(int x, int y) {
     if (is_in_grid(x, y)
         && grid.agents[y][x] == 0
-        //&& model->get_elevation(cell_x, cell_y) >= 1
         && grid.suitability[y][x] >= SUIT_VAL
         && grid.vegetation[y][x] >= FOREST_VAL)
         return true;
     else
         return false;
-}
-
-int Model::get_hg(int x, int y) {
-    return grid.hg[y][x];
-}
-
-void Model::set_hg(int x, int y, int num) {
-    grid.hg[y][x] = num;
 }
 
 std::pair<int, int> Model::to_grid(double x, double y) {

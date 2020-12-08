@@ -19,7 +19,7 @@ std::vector<std::pair<int, int>> Agent::ngb {std::make_pair(-1, -1),
                                              std::make_pair(1, 1)};
 
 Agent::Agent(Model& model, int x, int y, int population, int fission_threshold,
-             int k, int permanence, int leap_distance, double diffusion) :
+             int k, int permanence, int leap_distance) :
     id(new_id++),
     model(&model),
     x(x),
@@ -32,14 +32,12 @@ Agent::Agent(Model& model, int x, int y, int population, int fission_threshold,
     permanence(permanence),
     time_here(0),
     leap_distance(leap_distance),
-    diffusion(diffusion),
     breed(0),
     alive(true) {
         land.reserve(9);
         if (model.get_agent(x, y) == 0 && model.get_owner(x, y) == 0) {
             model.place_agent(id, x, y);
             model.set_owner(id, x, y);
-            //land.push_back(std::make_pair(x, y));
         }
         mask.reserve(900);
         if (leap_distance > 0 && mask.size() < 1)
@@ -91,7 +89,6 @@ void Agent::check_fission() {
         if (cells.size() > 0) {
             std::pair<int, int> best_cell = get_best_cell(cells);
             std::unique_ptr<Agent> new_agent = fission();
-            //new_agent->breed = breed;
             new_agent->move(best_cell.first, best_cell.second);
             model->add(new_agent);
         } else if (leap_distance > 0) {
@@ -99,7 +96,6 @@ void Agent::check_fission() {
             if (destinations.size() > 0) {
                 std::pair<int, int> best_cell = get_best_cell(destinations);
                 std::unique_ptr<Agent> new_agent = fission();
-                //new_agent->breed = breed;
                 new_agent->move(best_cell.first, best_cell.second);
                 model->add(new_agent);
             }
@@ -109,8 +105,8 @@ void Agent::check_fission() {
 
 std::unique_ptr<Agent> Agent::fission() {
     population /= 2;
-    std::unique_ptr<Agent> agent = std::make_unique<Agent>(*model, x, y, population, fission_threshold,
-                                                           k, permanence, leap_distance, diffusion);
+    auto agent = std::make_unique<Agent>(*model, x, y, population, fission_threshold,
+                                         k, permanence, leap_distance);
     return std::move(agent);
 }
 
@@ -126,12 +122,12 @@ void Agent::check_move() {
             if (destinations.size() > 0) {
                 std::pair<int, int> best_cell = get_best_cell(destinations);
                     move(best_cell.first, best_cell.second);
-            } else if (!forest_here && model->count_agents() > 1) {
-                alive = false;
-            }
-        } else if (!forest_here && model->count_agents() > 1) {
-            alive = false;
-        }
+            } //else if (!forest_here && model->count_agents() > 1) {
+                //alive = false;
+            //}
+        } //else if (!forest_here && model->count_agents() > 1) {
+            //alive = false;
+        //}
     }
 }
 
@@ -145,13 +141,10 @@ void Agent::move(int new_x, int new_y) {
     y = new_y;
     model->place_agent(id, new_x, new_y);
     model->set_owner(id, new_x, new_y);
-    //land.push_back(std::make_pair(new_x, new_y));
     if (model->get_date(new_x, new_y) == -1)
         model->record_date(new_x, new_y);
     time_here = 0;
     update_land();
-    if (diffusion > 0)
-        convert_hg();
 }
 
 void Agent::abandon_land() {
@@ -196,19 +189,6 @@ std::vector<std::pair<int, int>> Agent::check_leap_cells() {
     return cells;
 }
 
-/*
-bool Agent::is_suitable(int cell_x, int cell_y, bool own) {
-    if (model->is_in_grid(cell_x, cell_y)
-        && model->get_agent(cell_x, cell_y) == 0
-        //&& model->get_elevation(cell_x, cell_y) >= 1
-        && model->get_suitability(cell_x, cell_y) >= SUIT_VAL
-        && model->get_vegetation(cell_x, cell_y) >= FOREST_VAL)
-        return true;
-    else
-        return false;
-}
-*/
-
 std::pair<int, int> Agent::get_best_cell(std::vector<std::pair<int, int>> cells) {
     double best_val {-1};
     std::pair<int, int> best_cell;
@@ -240,17 +220,4 @@ int Agent::get_y() {
 
 bool Agent::is_alive() {
     return alive;
-}
-
-void Agent::convert_hg() {
-    int total {};
-    for (auto cell: land) {
-        int hg = model->get_hg(cell.first, cell.second);
-        if (hg > 0) {
-            int converted = ceil(diffusion * (double)hg);
-            total += converted;
-            model->set_hg(cell.first, cell.second, hg - converted);
-        }
-    }
-    population += total;
 }

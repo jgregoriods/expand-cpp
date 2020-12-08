@@ -40,7 +40,9 @@ class Genome:
 
 
 class GA:
-    def __init__(self, n_pop, n_select, n_elit, prob_cross, prob_mut):
+    def __init__(self, name, start, n_pop, n_select, n_elit, prob_cross, prob_mut):
+        self.name = name
+        self.start = start
         self.n_pop = n_pop
         self.n_select = n_select
         self.n_elit = n_elit
@@ -55,8 +57,9 @@ class GA:
         k = genes[1]
         perm = genes[2]
         leap = genes[3]
-        result = Popen(["./expand", f"--fiss={fiss}", f"--k={k}", f"--perm={perm}",
-                        f"--leap={leap}"], stdout=PIPE).communicate()[0]
+        result = Popen(["./expand", f"--cult={self.name}", f"--date={self.start}",
+                        f"--fiss={fiss}", f"--k={k}", f"--perm={perm}", f"--leap={leap}"],
+                        stdout=PIPE).communicate()[0]
         return float(result)
 
     def get_fitness(self):
@@ -121,7 +124,7 @@ class GA:
 
 
 def main():
-    ga = GA(10, 5, 1, 0.8, 0.2)
+    ga = GA("arawak", 5000, 10, 5, 1, 0.8, 0.2)
     ga.evolve(3)
 
 

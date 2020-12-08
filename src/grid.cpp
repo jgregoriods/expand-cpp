@@ -6,14 +6,18 @@
 
 #include "grid.h"
 
-Grid::Grid(int height, int width) : height(height), width(width) {
-    this->agents = new_layer(0);
-    this->owner = new_layer(0);
-    this->arrival = new_layer(-1);
-    this->elevation = layer_from_file("layers/ele.asc");
-    this->suitability = layer_from_file("layers/suit_ele.asc");
-    this->vegetation = layer_from_file("layers/veg/veg5000.asc");
-    this->hg = layer_from_file("layers/forager_drivs.asc");
+Grid::Grid(int height, int width, std::string name, int start) :
+    height(height),
+    width(width) {
+        agents = new_layer(0);
+        owner = new_layer(0);
+        arrival = new_layer(-1);
+        elevation = layer_from_file("layers/ele.asc");
+        std::string maxent_path {"layers/maxent/" + name + ".asc"};
+        suitability = layer_from_file(maxent_path);
+        int century {(int)(std::ceil(start / 100.0) * 100)};
+        std::string veg_path {"layers/veg/veg" + std::to_string(century) + ".asc"};
+        vegetation = layer_from_file(veg_path);
 }
 
 Grid::Grid() : height(825), width(638) {}

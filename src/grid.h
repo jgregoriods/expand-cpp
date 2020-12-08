@@ -6,7 +6,7 @@
 
 class Grid {
     public:
-        Grid(int height, int width);
+        Grid(int height, int width, std::string name, int start);
         Grid();
         std::vector<std::vector<double>> layer_from_file(std::string filename);
         std::vector<std::vector<int>> new_layer(int val);
@@ -20,7 +20,6 @@ class Grid {
         std::vector<std::vector<double>> elevation;
         std::vector<std::vector<double>> suitability;
         std::vector<std::vector<double>> vegetation;
-        std::vector<std::vector<double>> hg;
 };
 
 #endif

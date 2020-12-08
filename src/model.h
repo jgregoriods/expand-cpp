@@ -10,12 +10,13 @@
 
 class Agent;
 class Date;
+class Grid;
 
 class Model {
     public:
-        Model();
-        void setup(int start_date, std::vector<std::pair<int, int>> coords, int fission_threshold,
-                   int k, int permanence, int leap_distance, double diffusion);
+        Model(std::string culture, int start_date);
+        void setup(std::pair<int, int> coords, int fission_threshold, int k,
+                   int permanence, int leap_distance);
         void run(int n, bool write_files=false, bool show_progress=false);
         void step(bool write_files=false);
         void add(std::unique_ptr<Agent>& agent);
@@ -30,17 +31,16 @@ class Model {
         void record_date(int x, int y);
         int count_agents();
         void update_env();
-        void load_dates(std::string path);
+        void load_dates();
         double get_score();
         void write_snapshot();
         void write_asc();
         bool is_in_grid(int x, int y);
         bool is_suitable(int x, int y);
         bool is_forest(int x, int y);
-        int get_hg(int x, int y);
-        void set_hg(int x, int y, int num);
         std::pair<int, int> to_grid(double x, double y);
     private:
+        std::string culture;
         Grid grid;
         int bp;
         std::vector<std::unique_ptr<Agent>> agents;

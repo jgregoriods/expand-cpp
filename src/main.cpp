@@ -18,9 +18,9 @@ struct Options {
     int k {20};
     int permanence {10};
     int leap_distance {15};
+    std::string culture{"arawak"};
     bool show_bar {false};
     bool write_files {false};
-    double diffusion {0.0};
     Options(std::vector<std::string> args) {
         for (auto str: args) {
             if (str.substr(0, 7) == "--date=")
@@ -33,8 +33,8 @@ struct Options {
                 permanence = std::stoi(str.substr(7, str.length()));
             else if (str.substr(0, 7) == "--leap=")
                 leap_distance = std::stoi(str.substr(7, str.length()));
-            else if (str.substr(0, 7) == "--diff=")
-                diffusion = std::stod(str.substr(7, str.length()));
+            else if (str.substr(0, 7) == "--cult=")
+                culture = str.substr(7, str.length());
             else if (str == "--show-bar")
                 show_bar = true;
             else if (str == "--write")
@@ -46,15 +46,11 @@ struct Options {
 int main(const int argc, const char* argv[]) {
     std::vector<std::string> args(argv+1, argv+argc);
     Options opts(args);
-    Model model;
-    std::vector<std::pair<int, int>> coords {};
-    coords.push_back(model.to_grid(-691710.658957183, 4458567.75751303));
-    coords.push_back(model.to_grid(-1486664.57537706, 2417295.27500477));
-    model.setup(opts.start_date, coords,
-                opts.fission_threshold, opts.k, opts.permanence,
-                opts.leap_distance, opts.diffusion);
-    model.run(4400, opts.write_files, opts.show_bar);
-    model.load_dates("dates");
+    Model model(opts.culture, opts.start_date);
+    auto coords = model.to_grid(-691710.658957183, 4458567.75751303);
+    model.setup(coords, opts.fission_threshold, opts.k, opts.permanence, opts.leap_distance);
+    model.run(opts.start_date - 600, opts.write_files, opts.show_bar);
+    model.load_dates();
     std::cout << std::fixed << std::setprecision(4) << model.get_score() << std::endl;
     return 0;
 }
