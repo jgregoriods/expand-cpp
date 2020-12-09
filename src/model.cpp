@@ -39,7 +39,7 @@ void Model::run(int n, bool write_files, bool show_progress) {
     for (int i {0}; i < n; ++i) {
         step(write_files);
         std::time(&timer2);
-        if (std::difftime(timer2, timer1) > 180) // STOP IF > 3 MINUTES...
+        if (std::difftime(timer2, timer1) > 60) // STOP IF > 3 MINUTES...
             break;
         if (show_progress) {
             k++;
