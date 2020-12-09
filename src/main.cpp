@@ -61,7 +61,5 @@ int main(const int argc, const char* argv[]) {
     auto grid_coords = model.to_grid(coords.first, coords.second);
     model.setup(grid_coords, opts.fission_threshold, opts.k, opts.permanence, opts.leap_distance);
     model.run(opts.start_date - 600, opts.write_files, opts.show_bar);
-    model.load_dates();
-    std::cout << std::fixed << std::setprecision(4) << model.get_score() << std::endl;
     return 0;
 }

@@ -10,10 +10,12 @@ class Date {
         void read_file(std::string filename);
         double get_x();
         double get_y();
-        double get_prob(int year);
+        void set_prob(int year);
+        double get_prob();
     private:
         double x;
         double y;
+        double prob;
         std::map<int, double> probs;
 };
 

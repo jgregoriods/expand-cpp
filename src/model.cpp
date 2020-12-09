@@ -1,6 +1,7 @@
 #include <ctime>
 #include <filesystem>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <iterator>
 #include <memory>
@@ -51,8 +52,11 @@ void Model::run(int n, bool write_files, bool show_progress) {
     }
     if (show_progress)
         std::cout << std::endl;
+    load_dates();
+    std::cout << std::fixed << std::setprecision(4) << get_score() << std::endl;
     if (write_files)
         write_asc();
+        write_dates();
 }
 
 void Model::step(bool write_files) {
@@ -138,7 +142,8 @@ double Model::get_score() {
     for (auto& date: dates) {
         std::pair<int, int> cell {grid.to_grid(date->get_x(), date->get_y())};
         int sim_bp {grid.arrival[cell.second][cell.first]};
-        total += date->get_prob(sim_bp);
+        date->set_prob(sim_bp);
+        total += date->get_prob();
     }
     return total / dates.size();
 }
@@ -153,7 +158,8 @@ void Model::write_snapshot() {
 }
 
 void Model::write_asc() {
-    std::ofstream file("output/arrival.asc");
+    std::ofstream file;
+    file.open("output/arrival.asc");
     file << "NCOLS 638" << std::endl;
     file << "NROWS 825" << std::endl;
     file << "XLLCORNER -2985163.8955" << std::endl;
@@ -166,6 +172,16 @@ void Model::write_asc() {
                   grid.arrival.at(i).end(), it);
         file << std::endl;
     }
+    file.close();
+}
+
+void Model::write_dates() {
+    std::ofstream file;
+    file.open("output/dates.csv");
+    file << "x,y,score\n";
+    for (auto& date: dates)
+        file << date->get_x() << ", " << date->get_y() << ", " << date->get_prob() << "\n";
+    file.close();
 }
 
 bool Model::is_in_grid(int x, int y) {
