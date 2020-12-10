@@ -38,6 +38,9 @@ double Date::get_y() {
 void Date::set_prob(int year) {
     if (probs.find(year) != probs.end())
         prob = probs[year];
+    /* else if (year == -1)
+        prob = -1.0; // THIS IS FOR DEBUGGING, REMOVE //////////////////////
+    */
 }
 
 double Date::get_prob() {

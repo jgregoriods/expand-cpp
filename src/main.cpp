@@ -22,8 +22,8 @@ struct Options {
     std::string origin {"lagruta"};
     bool show_bar {false};
     bool write_files {false};
-    double forest {0.4};
-    double maxent {0.25};
+    double forest {0.0};
+    double maxent {0.0};
     Options(std::vector<std::string> args) {
         for (auto str: args) {
             if (str.substr(0, 7) == "--date=")
