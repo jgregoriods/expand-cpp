@@ -61,7 +61,7 @@ class GA:
         #### Modify here for the site, maxent and vegetation ####
         result = Popen(["./expand", f"--cult={self.name}", f"--date={self.start}", "--site=encontro",
                         f"--fiss={fiss}", f"--k={k}", f"--perm={perm}", f"--leap={leap}",
-                        "--max=0.18", "--veg=0.5"],
+                        "--max=0.18", "--veg=0.0"],
                         stdout=PIPE).communicate()[0]
         #########################################################
 
@@ -71,7 +71,7 @@ class GA:
         pop_subset = [p for p in self.population if isinstance(p.fitness, str)]
         pop_genes = [i.get_gene_values() for i in pop_subset]
         ############################
-        pool = mp.Pool(18) # n cores
+        pool = mp.Pool(10) # n cores
         ############################
         fitness = np.array(pool.map(self.run_model, pop_genes))
         pool.close()

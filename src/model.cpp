@@ -54,9 +54,10 @@ void Model::run(int n, bool write_files, bool show_progress) {
         std::cout << std::endl;
     load_dates();
     std::cout << std::fixed << std::setprecision(4) << get_score() << std::endl;
-    if (write_files)
+    if (write_files) {
         write_asc();
         write_dates();
+    }
 }
 
 void Model::step(bool write_files) {
@@ -172,7 +173,7 @@ void Model::write_snapshot() {
 
 void Model::write_asc() {
     std::ofstream file;
-    file.open("output/arrival.asc");
+    file.open("output2/arrival.asc"); ////////////////////////////////////////////////////////////
     file << "NCOLS 638" << std::endl;
     file << "NROWS 825" << std::endl;
     file << "XLLCORNER -2985163.8955" << std::endl;
@@ -190,7 +191,7 @@ void Model::write_asc() {
 
 void Model::write_dates() {
     std::ofstream file;
-    file.open("output/dates.csv");
+    file.open("output2/dates.csv"); ////////////////////////////////////////////////////////////
     file << "x,y,score\n";
     for (auto& date: dates)
         file << date->get_x() << ", " << date->get_y() << ", " << date->get_prob() << ", " << date->year << "\n";
