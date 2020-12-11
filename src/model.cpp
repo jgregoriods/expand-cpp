@@ -141,8 +141,21 @@ double Model::get_score() {
     double total {};
     for (auto& date: dates) {
         std::pair<int, int> cell {grid.to_grid(date->get_x(), date->get_y())};
-        int sim_bp {grid.arrival[cell.second][cell.first]};
-        date->set_prob(sim_bp);
+        int x {cell.first}, y {cell.second};
+        std::vector<int> sim_dates;
+        for (int i {-5}; i <= 5; ++i) {
+            for (int j {-5}; j <= 5; ++j) {
+                int sim_bp {grid.arrival[y+j][x+i]};
+                if (sim_bp > -1)
+                    sim_dates.push_back(sim_bp);
+            }
+        }
+        int date_sum {};
+        for (int sim_date: sim_dates)
+            date_sum += sim_date;
+        int avg_sim_bp = date_sum / sim_dates.size();
+        date->set_prob(avg_sim_bp);
+        date->year = avg_sim_bp; // REMOVE /////////////////////////////////////////////////////////////////////////////////
         total += date->get_prob();
     }
     return total / dates.size();
@@ -180,7 +193,7 @@ void Model::write_dates() {
     file.open("output/dates.csv");
     file << "x,y,score\n";
     for (auto& date: dates)
-        file << date->get_x() << ", " << date->get_y() << ", " << date->get_prob() << "\n";
+        file << date->get_x() << ", " << date->get_y() << ", " << date->get_prob() << ", " << date->year << "\n";
     file.close();
 }
 
