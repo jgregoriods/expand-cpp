@@ -1,4 +1,4 @@
-TARGET = expand2
+TARGET = expand
 
 CC = g++
 CFLAGS = -O2 --std=c++17
