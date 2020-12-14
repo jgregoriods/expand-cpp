@@ -139,7 +139,7 @@ void Model::load_dates() {
 }
 
 double Model::get_score() {
-    double total {};
+    double total {}, num_dates {};
     for (auto& date: dates) {
         std::pair<int, int> cell {grid.to_grid(date->get_x(), date->get_y())};
         int x {cell.first}, y {cell.second};
@@ -158,8 +158,12 @@ double Model::get_score() {
         date->set_prob(avg_sim_bp);
         date->year = avg_sim_bp; // REMOVE /////////////////////////////////////////////////////////////////////////////////
         total += date->get_prob();
+        if (date->get_prob() > 0.0)
+            num_dates += 1.0;
     }
-    return total / dates.size();
+    double date_prob_score {total / dates.size()};
+    double num_dates_score {num_dates / dates.size()};
+    return (date_prob_score + num_dates_score) / 2.0;
 }
 
 void Model::write_snapshot() {
