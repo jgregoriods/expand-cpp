@@ -24,14 +24,11 @@ class Agent {
         std::vector<std::pair<int, int>> check_empty_cells();
         std::vector<std::pair<int, int>> check_destinations();
         std::vector<std::pair<int, int>> check_leap_cells();
-        //bool is_suitable(int cell_x, int cell_y, bool own=false);
         std::pair<int, int> get_best_cell(std::vector<std::pair<int, int>> cells);
         int get_distance(int x_i, int y_i);
         int get_id();
         int get_x();
         int get_y();
-        bool is_alive();
-        int breed;
     private:
         static int new_id;
         static std::vector<std::pair<int, int>> mask;
@@ -48,7 +45,6 @@ class Agent {
         int permanence;
         int time_here;
         int leap_distance;
-        bool alive;
         std::vector<std::pair<int, int>> land;
 };
 

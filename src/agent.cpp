@@ -1,4 +1,3 @@
-#include <iostream> // remove
 #include <cmath>
 #include <memory>
 #include <utility>
@@ -20,20 +19,18 @@ std::vector<std::pair<int, int>> Agent::ngb {std::make_pair(-1, -1),
 
 Agent::Agent(Model& model, int x, int y, int population, int fission_threshold,
              int k, int permanence, int leap_distance) :
-    id(new_id++),
-    model(&model),
-    x(x),
-    y(y),
-    r(0.025),
-    population(population),
-    fission_threshold(fission_threshold),
-    k(k),
-    total_k(k),
-    permanence(permanence),
-    time_here(0),
-    leap_distance(leap_distance),
-    breed(0),
-    alive(true) {
+    id {new_id++},
+    model {&model},
+    x {x},
+    y {y},
+    r {0.025}, // growth rate is kept constant (2.5%) in all models
+    population {population},
+    fission_threshold {fission_threshold},
+    k {k},
+    total_k {k},
+    permanence {permanence},
+    time_here {0},
+    leap_distance {leap_distance} {
         land.reserve(9);
         if (model.get_agent(x, y) == 0 && model.get_owner(x, y) == 0) {
             model.place_agent(id, x, y);
@@ -55,18 +52,29 @@ void Agent::make_mask(int radius) {
     }
 }
 
+/*
+* Sequene of methods to be executed every tick (year) of the model.
+*/
 void Agent::step() {
     grow();
     check_fission();
     check_move();
-    time_here++;
 }
 
+/*
+* Population grows exponentially. Update land is called to check whether
+* max density/carrying capactiy has been reached.
+*/
 void Agent::grow() {
     population += round(population * r);
     update_land();
 }
 
+/*
+* Checks whether population is above max density. If so, tries to add a new
+* cell to the village's land. If that is not possible, population is stabilized
+* at current max density.
+*/
 void Agent::update_land() {
     while (population > total_k) {
         std::vector<std::pair<int, int>> cells {check_destinations()};
@@ -122,13 +130,10 @@ void Agent::check_move() {
             if (destinations.size() > 0) {
                 std::pair<int, int> best_cell = get_best_cell(destinations);
                     move(best_cell.first, best_cell.second);
-            } //else if (!forest_here && model->count_agents() > 1) {
-                //alive = false;
-            //}
-        } //else if (!forest_here && model->count_agents() > 1) {
-            //alive = false;
-        //}
+            }
+        }
     }
+    ++time_here;
 }
 
 void Agent::move(int new_x, int new_y) {
@@ -216,8 +221,4 @@ int Agent::get_x() {
 
 int Agent::get_y() {
     return y;
-}
-
-bool Agent::is_alive() {
-    return alive;
 }

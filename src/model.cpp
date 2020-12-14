@@ -64,14 +64,8 @@ void Model::step(bool write_files) {
     auto it = agents.begin();
     while (it != agents.end()) {
         auto& agent = *it;
-        if (!agent->is_alive()) {
-            agent->abandon_land();
-            agent.reset();
-            it = agents.erase(it);
-        } else {
-            agent->step();
-            ++it;
-        }
+        agent->step();
+        ++it;
     }
     bp--;
     update_env();
@@ -171,7 +165,7 @@ void Model::write_snapshot() {
     std::ofstream file;
     file.open(filename);
     for (auto& agent: agents)
-        file << agent->get_x() << ", " << agent->get_y() <<  ", " << agent->breed << "\n";
+        file << agent->get_x() << ", " << agent->get_y() << "\n";
     file.close();
 }
 
