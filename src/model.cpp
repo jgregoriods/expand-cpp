@@ -150,7 +150,6 @@ double Model::get_score() {
             date_sum += sim_date;
         int avg_sim_bp = date_sum / sim_dates.size();
         date->set_prob(avg_sim_bp);
-        date->year = avg_sim_bp; // REMOVE /////////////////////////////////////////////////////////////////////////////////
         total += date->get_prob();
         if (date->get_prob() > 0.0)
             num_dates += 1.0;
@@ -171,7 +170,7 @@ void Model::write_snapshot() {
 
 void Model::write_asc() {
     std::ofstream file;
-    file.open("output/arrival.asc"); ////////////////////////////////////////////////////////////
+    file.open("output/arrival.asc");
     file << "NCOLS 638" << std::endl;
     file << "NROWS 825" << std::endl;
     file << "XLLCORNER -2985163.8955" << std::endl;
@@ -189,10 +188,10 @@ void Model::write_asc() {
 
 void Model::write_dates() {
     std::ofstream file;
-    file.open("output/dates.csv"); ////////////////////////////////////////////////////////////
+    file.open("output/dates.csv");
     file << "x,y,score\n";
     for (auto& date: dates)
-        file << date->get_x() << ", " << date->get_y() << ", " << date->get_prob() << ", " << date->year << "\n";
+        file << date->get_x() << ", " << date->get_y() << ", " << date->get_prob() << "\n";
     file.close();
 }
 

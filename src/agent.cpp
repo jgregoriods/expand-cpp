@@ -13,14 +13,14 @@ int Agent::new_id {1};
 std::vector<std::pair<int, int>> Agent::leap_cells {};
 
 // vector with (x, y) difference to the 8 immediate neighbors
-std::vector<std::pair<int, int>> Agent::ngb {std::make_pair(-1, -1),
-                                             std::make_pair(0, -1),
-                                             std::make_pair(1, -1),
-                                             std::make_pair(-1, 0),
-                                             std::make_pair(1, 0),
-                                             std::make_pair(-1, 1),
-                                             std::make_pair(0, 1),
-                                             std::make_pair(1, 1)};
+std::vector<std::pair<int, int>> Agent::neighbors {std::make_pair(-1, -1),
+                                                   std::make_pair(0, -1),
+                                                   std::make_pair(1, -1),
+                                                   std::make_pair(-1, 0),
+                                                   std::make_pair(1, 0),
+                                                   std::make_pair(-1, 1),
+                                                   std::make_pair(0, 1),
+                                                   std::make_pair(1, 1)};
 
 Agent::Agent(Model& model, int x, int y, int population, int fission_threshold,
              int k, int permanence, int leap_distance) :
@@ -116,14 +116,14 @@ void Agent::update_land() {
 */
 void Agent::check_fission() {
     if (population > fission_threshold) {
-        std::vector<std::pair<int, int>> cells {check_destinations()};
+        std::vector<std::pair<int, int>> cells = check_destinations();
         if (cells.size() > 0) {
             std::pair<int, int> best_cell = get_best_cell(cells);
             std::unique_ptr<Agent> new_agent = fission();
             new_agent->move(best_cell.first, best_cell.second);
             model->add(new_agent);
         } else if (leap_distance > 0) {
-            std::vector<std::pair<int, int>> destinations {check_leap_cells()};
+            std::vector<std::pair<int, int>> destinations = check_leap_cells();
             if (destinations.size() > 0) {
                 std::pair<int, int> best_cell = get_best_cell(destinations);
                 std::unique_ptr<Agent> new_agent = fission();
@@ -154,12 +154,12 @@ std::unique_ptr<Agent> Agent::fission() {
 void Agent::check_move() {
     bool forest_here {model->is_forest(x, y)};
     if (time_here > permanence || !forest_here) {
-        std::vector<std::pair<int, int>> cells {check_empty_cells()};
+        std::vector<std::pair<int, int>> cells = check_empty_cells();
         if (cells.size() > 0) {
             std::pair<int, int> best_cell = get_best_cell(cells);
             move(best_cell.first, best_cell.second);
         } else if (leap_distance > 0) {
-            std::vector<std::pair<int, int>> destinations {check_leap_cells()};
+            std::vector<std::pair<int, int>> destinations = check_leap_cells();
             if (destinations.size() > 0) {
                 std::pair<int, int> best_cell = get_best_cell(destinations);
                     move(best_cell.first, best_cell.second);
@@ -190,6 +190,10 @@ void Agent::move(int new_x, int new_y) {
     update_land();
 }
 
+/*
+* Resets the agent of current cell and the owner of all cells in village's
+* land to 0.
+*/
 void Agent::abandon_land() {
     model->place_agent(0, x, y);
     model->set_owner(0, x, y);
@@ -197,10 +201,14 @@ void Agent::abandon_land() {
         model->set_owner(0, cell.first, cell.second);
 }
 
+/*
+* Returns a vector of (x, y) coordinates of cells which are not settled,
+* not owned and are inhabitable (based on suitability and vegetation layers).
+*/
 std::vector<std::pair<int, int>> Agent::check_empty_cells() {
     std::vector<std::pair<int, int>> cells;
     cells.reserve(900);
-    for (auto cell: ngb) {
+    for (auto cell: neighbors) {
         int i {cell.first}, j {cell.second};
         if (model->is_suitable(x+i, y+j)
             && (model->get_owner(x+i, y+j) == 0
@@ -210,10 +218,14 @@ std::vector<std::pair<int, int>> Agent::check_empty_cells() {
     return cells;
 }
 
+/*
+* Returns a vector of (x, y) coordinates of cells in the immediate
+* neighborhood which are not owned and are inhabitable.
+*/
 std::vector<std::pair<int, int>> Agent::check_destinations() {
     std::vector<std::pair<int, int>> cells;
     cells.reserve(9);
-    for (auto cell: ngb) {
+    for (auto cell: neighbors) {
         int i {cell.first}, j {cell.second};
         if (model->is_suitable(x+i, y+j) && model->get_owner(x+i, y+j) == 0)
             cells.push_back(std::make_pair(x+i, y+j));
@@ -221,6 +233,10 @@ std::vector<std::pair<int, int>> Agent::check_destinations() {
     return cells;
 }
 
+/*
+* Returns a vector of (x, y) coordinates of cells at leap distance which
+* are not settled, not owned and are inhabitable.
+*/
 std::vector<std::pair<int, int>> Agent::check_leap_cells() {
     std::vector<std::pair<int, int>> cells;
     cells.reserve(900);
@@ -232,6 +248,10 @@ std::vector<std::pair<int, int>> Agent::check_leap_cells() {
     return cells;
 }
 
+/*
+* Given a vector of (x, y) cell coordinates, returns the one with the highest
+* suitability value. 
+*/
 std::pair<int, int> Agent::get_best_cell(std::vector<std::pair<int, int>> cells) {
     double best_val {-1};
     std::pair<int, int> best_cell;
@@ -245,6 +265,10 @@ std::pair<int, int> Agent::get_best_cell(std::vector<std::pair<int, int>> cells)
     return best_cell;
 }
 
+/*
+* Returns the distance (in grid cells) from the current cell to another cell
+* given its coordinates.
+*/
 int Agent::get_distance(int x_i, int y_i) {
     return round(sqrt(pow(x - x_i, 2) + pow(y - y_i, 2)));
 }

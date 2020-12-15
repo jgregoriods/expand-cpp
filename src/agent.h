@@ -29,10 +29,11 @@ class Agent {
         int get_id();
         int get_x();
         int get_y();
+
     private:
         static int new_id;
         static std::vector<std::pair<int, int>> leap_cells;
-        static std::vector<std::pair<int, int>> ngb;
+        static std::vector<std::pair<int, int>> neighbors;
         int id;
         Model* model;
         int x;

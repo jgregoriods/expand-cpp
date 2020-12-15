@@ -6,10 +6,15 @@
 
 #include "date.h"
 
-Date::Date(std::string filename) : prob(0.0) {
+Date::Date(std::string filename) : prob {0.0} {
     read_file(filename);
 }
 
+/*
+* Given a file whose first line is a pair of coordinates and the remaining
+* lines are years bp and calibrated probabilities, updates the object's
+* x, y and probs (year-probability map).
+*/
 void Date::read_file(std::string filename) {
     std::string line {};
     int year {};
@@ -24,6 +29,7 @@ void Date::read_file(std::string filename) {
             split >> year >> prob;
             probs.insert(std::make_pair(year, prob));
         }
+        file.close();
     }
 }
 
@@ -38,9 +44,6 @@ double Date::get_y() {
 void Date::set_prob(int year) {
     if (probs.find(year) != probs.end())
         prob = probs[year];
-    /* else if (year == -1)
-        prob = -1.0; // THIS IS FOR DEBUGGING, REMOVE //////////////////////
-    */
 }
 
 double Date::get_prob() {
