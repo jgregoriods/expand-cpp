@@ -12,7 +12,7 @@ class Agent {
         Agent(Model& model, int x, int y, int population, int fission_threshold,
               int k, int permanence, int leap_distance);
         ~Agent();
-        void make_mask(int radius);
+        void make_leap_cells(int distance);
         void step();
         void grow();
         void update_land();
@@ -31,7 +31,7 @@ class Agent {
         int get_y();
     private:
         static int new_id;
-        static std::vector<std::pair<int, int>> mask;
+        static std::vector<std::pair<int, int>> leap_cells;
         static std::vector<std::pair<int, int>> ngb;
         int id;
         Model* model;
