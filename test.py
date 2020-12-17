@@ -21,16 +21,16 @@ def show_bar(it, size):
         print("\n")
 
 
-CULTURE = "arawak"
-START = 4100
-SITE = "latia"
-MAXENT = 0.224
+CULTURE = "tupi"
+START = 4400
+SITE = "encontro"
+MAXENT = 0.244
 VEG = 0.5
 
 
-fiss_vals = [i for i in range(50, 151, 50)]
-k_vals = [i for i in range(20, 101, 40)]
-leap_vals = [i for i in range(0, 31, 15)]
+fiss_vals = [i for i in range(50, 151, 25)]
+k_vals = [i for i in range(20, 101, 20)]
+leap_vals = [i for i in range(0, 31, 10)]
 
 
 def run(vals):
@@ -38,9 +38,9 @@ def run(vals):
     k_val = vals[1]
     leap_val = vals[2]
     params = f"{fiss_val} {k_val} {leap_val}"
-    result = Popen(["./expand", f"--cult={CULTURE}", f"--date={START}", f"--site={SITE}",
-                    f"--fiss={fiss_val}", f"--k={k_val}", f"--perm=10", f"--leap={leap_val}",
-                    f"--max={MAXENT}", f"--veg={VEG}"], stdout=PIPE).communicate()[0]
+    result = Popen(["./expand", f"--cult={CULTURE}", f"--date={START}",
+                    f"--site={SITE}", f"--fiss={fiss_val}", f"--k={k_val}",
+                    f"--perm=10", f"--leap={leap_val}", f"--max={MAXENT}", f"--veg={VEG}"], stdout=PIPE).communicate()[0]
     return {params: float(result)}
 
 
