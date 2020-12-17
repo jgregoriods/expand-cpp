@@ -12,11 +12,13 @@
 
 using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
 
-Model::Model(std::string culture, int start_date, double maxent, double forest) :
+Model::Model(std::string culture, int start_date, double maxent, double forest,
+             std::string date_folder) :
     culture(culture),
     bp(start_date),
     SUIT_VAL(maxent),
-    FOREST_VAL(forest) {
+    FOREST_VAL(forest),
+    date_folder(date_folder) {
         Grid new_grid(825, 638, culture, start_date);
         grid = new_grid;
         agents.reserve(500000);
@@ -125,7 +127,7 @@ void Model::update_env() {
 }
 
 void Model::load_dates() {
-    std::string path {"dates/" + culture};
+    std::string path {"dates/" + date_folder};
     for (const auto& entry: recursive_directory_iterator(path)) {
         std::unique_ptr<Date> date = std::make_unique<Date>(entry.path());
         dates.push_back(std::move(date));

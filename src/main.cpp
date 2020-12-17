@@ -13,13 +13,14 @@
 #include "model.h"
 
 struct Options {
-    int start_date {5000};
+    int start_date {4100};
     int fission_threshold {100};
     int k {20};
     int permanence {10};
     int leap_distance {15};
     std::string culture {"arawak"};
-    std::string origin {"lagruta"};
+    std::string origin {"latia"};
+    std::string date_folder {"arawak_sw"};
     bool show_bar {false};
     bool write_files {false};
     double forest {0.0};
@@ -44,6 +45,8 @@ struct Options {
                 forest = std::stod(str.substr(6, str.length()));
             else if (str.substr(0, 6) == "--max=")
                 maxent = std::stod(str.substr(6, str.length()));
+            else if (str.substr(0, 14) == "--date-folder=")
+                date_folder = str.substr(14, str.length());
             else if (str == "--show-bar")
                 show_bar = true;
             else if (str == "--write")
@@ -56,7 +59,7 @@ struct Options {
 int main(const int argc, const char* argv[]) {
     std::vector<std::string> args(argv+1, argv+argc);
     Options opts(args);
-    Model model(opts.culture, opts.start_date, opts.maxent, opts.forest);
+    Model model(opts.culture, opts.start_date, opts.maxent, opts.forest, opts.date_folder);
     auto coords = model.get_coords(opts.origin);
     auto grid_coords = model.to_grid(coords.first, coords.second);
     model.setup(grid_coords, opts.fission_threshold, opts.k, opts.permanence, opts.leap_distance);

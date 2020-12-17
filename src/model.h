@@ -14,7 +14,8 @@ class Grid;
 
 class Model {
     public:
-        Model(std::string culture, int start_date, double maxent, double forest);
+        Model(std::string culture, int start_date, double maxent, double forest,
+              std::string date_folder);
         void setup(std::pair<int, int> coords, int fission_threshold, int k,
                    int permanence, int leap_distance);
         void run(int n, bool write_files=false, bool show_progress=false);
@@ -45,6 +46,7 @@ class Model {
         double SUIT_VAL;
         double FOREST_VAL;
         std::string culture;
+        std::string date_folder;
         Grid grid;
         int bp;
         std::vector<std::unique_ptr<Agent>> agents;
