@@ -3,24 +3,44 @@ import numpy as np
 import pandas as pd
 
 from subprocess import Popen
+from math import ceil
 
 
-Popen(["./expand", f"--cult=arawak", f"--date=1100",
-        f"--date-folder=arawak_sw", f"--site=latia",
-        f"--fiss=150", f"--k=20", f"--perm=10",
-        f"--leap=15", f"--max=0.22",
-        f"--veg=0.0", "--write", "--show-bar"]).wait()
+MIN_X = -2985163.8955
+MAX_Y = 5227968.786
+CELL_SIZE = 10000
+
+
+def grid_x(x):
+    grid_x = round((x - MIN_X) / CELL_SIZE)
+    return grid_x
+
+
+def grid_y(y):
+    grid_y = abs(round((y - MAX_Y) / CELL_SIZE))
+    return grid_y
+
+
+Popen(["./expand", f"--cult=tupi", f"--date=4400",
+        f"--date-folder=tupi_sw", f"--site=encontro",
+        f"--fiss=100", f"--k=40", f"--perm=10",
+        f"--leap=25", f"--max=0.22",
+        f"--veg=0.5", "--write", "--show-bar"]).wait()
 
 a = np.vstack(np.loadtxt("./output/arrival.asc", skiprows=6).astype(float))
 a[a == -1] = np.nan
 dates = pd.read_csv("./output/dates.csv", header=None).loc[1:,:1]
 dates[0] = dates[0].astype(pd.np.float64)
+dates[0] = [grid_x(x) for x in dates[0]]
 dates[1] = dates[1].astype(pd.np.float64)
+dates[1] = [grid_y(y) for y in dates[1]]
 dates = dates.values
 scores = pd.read_csv("./output/dates.csv", header=None).loc[1:,2]
 scores = scores.astype(pd.np.float64)
 scores = scores.values
+scores = [ceil(i) for i in scores]
+
 
 plt.imshow(a)
-#plt.scatter(*zip(*dates), c=scores, cmap="gray")
+plt.scatter(*zip(*dates), c=scores, cmap="autumn")
 plt.show()
