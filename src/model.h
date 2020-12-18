@@ -33,7 +33,7 @@ class Model {
         int count_agents();
         void update_env();
         void load_dates();
-        double get_score();
+        std::pair<double, int> get_score();
         void write_snapshot();
         void write_asc();
         void write_dates();

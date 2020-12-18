@@ -55,7 +55,8 @@ void Model::run(int n, bool write_files, bool show_progress) {
     if (show_progress)
         std::cout << std::endl;
     load_dates();
-    std::cout << std::fixed << std::setprecision(4) << get_score() << std::endl;
+    std::pair<double, int> score = get_score();
+    std::cout << std::fixed << std::setprecision(4) << score.first << " " << score.second << std::endl;
     if (write_files) {
         write_asc();
         write_dates();
@@ -134,8 +135,9 @@ void Model::load_dates() {
     }
 }
 
-double Model::get_score() {
-    double total {}, num_dates {};
+std::pair<double, int> Model::get_score() {
+    double total {};
+    int num_dates {};
     for (auto& date: dates) {
         std::pair<int, int> cell {grid.to_grid(date->get_x(), date->get_y())};
         int x {cell.first}, y {cell.second};
@@ -150,15 +152,16 @@ double Model::get_score() {
         int date_sum {};
         for (int sim_date: sim_dates)
             date_sum += sim_date;
-        int avg_sim_bp = date_sum / sim_dates.size();
+        int avg_sim_bp {};
+        if (sim_dates.size() > 0)
+            avg_sim_bp = date_sum / sim_dates.size();
         date->set_prob(avg_sim_bp);
         total += date->get_prob();
         if (date->get_prob() > 0.0)
-            num_dates += 1.0;
+            ++num_dates;
     }
     double date_prob_score {total / dates.size()};
-    double num_dates_score {num_dates / dates.size()};
-    return (date_prob_score + num_dates_score) / 2.0;
+    return std::make_pair(date_prob_score, num_dates);
 }
 
 void Model::write_snapshot() {

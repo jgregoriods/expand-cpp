@@ -21,8 +21,8 @@ class Agent {
         void check_move();
         void move(int new_x, int new_y);
         void abandon_land();
-        std::vector<std::pair<int, int>> check_empty_cells();
-        std::vector<std::pair<int, int>> check_destinations();
+        std::vector<std::pair<int, int>> check_empty_cells(std::vector<std::pair<int, int>> dist);
+        std::vector<std::pair<int, int>> check_destinations(std::vector<std::pair<int, int>> dist);
         std::vector<std::pair<int, int>> check_leap_cells();
         std::pair<int, int> get_best_cell(std::vector<std::pair<int, int>> cells);
         int get_distance(int x_i, int y_i);
@@ -33,6 +33,7 @@ class Agent {
     private:
         static int new_id;
         static std::vector<std::pair<int, int>> leap_cells;
+        static std::vector<std::pair<int, int>> move_cells;
         static std::vector<std::pair<int, int>> neighbors;
         int id;
         Model* model;
