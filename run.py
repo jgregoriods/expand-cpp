@@ -21,11 +21,22 @@ def grid_y(y):
     return grid_y
 
 
-Popen(["./expand", f"--cult=tupi", f"--date=4400",
-        f"--date-folder=tupi_sw", f"--site=encontro",
-        f"--fiss=100", f"--k=40", f"--perm=10",
-        f"--leap=25", f"--max=0.22",
-        f"--veg=0.5", "--write", "--show-bar"]).wait()
+CULT = "tupi"
+START = 4000
+SITE = "jiparana"
+VEG = 0.5
+FOLDER = "tupi_sw"
+
+FISS = 125
+K = 25
+LEAP = 0
+
+
+Popen(["./expand", f"--cult={CULT}", f"--date={START}",
+        f"--date-folder={FOLDER}", f"--site={SITE}",
+        f"--fiss={FISS}", f"--k={K}", "--perm=10",
+        f"--leap={LEAP}", "--max=0.22",
+        f"--veg={VEG}", "--write", "--show-bar"]).wait()
 
 a = np.vstack(np.loadtxt("./output/arrival.asc", skiprows=6).astype(float))
 a[a == -1] = np.nan

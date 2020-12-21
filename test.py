@@ -21,20 +21,21 @@ def show_bar(it, size):
         print("\n")
 
 
-SETTINGS = [("arawak", 4100, "latia", 0.22, 0.0, "arawak_sw"),
-            ("arawak", 4100, "latia", 0.22, 0.5, "arawak_sw"),
-            ("arawak", 3000, "saladero", 0.22, 0.0, "arawak_short"),
-            ("arawak", 3000, "saladero", 0.22, 0.5, "arawak_short"),
-            ("arawak", 4600, "lagruta", 0.22, 0.0, "arawak_short"),
-            ("arawak", 4600, "lagruta", 0.22, 0.5, "arawak_short"),
-            ("tupi", 4400, "encontro", 0.22, 0.0, "tupi_sw"),
-            ("tupi", 4400, "encontro", 0.22, 0.5, "tupi_sw"),
-            ("tupi", 2500, "bvista", 0.22, 0.0, "tupi_e"),
-            ("tupi", 2500, "bvista", 0.22, 0.5, "tupi_e")]
+#SETTINGS = [("arawak", 4100, "latia", 0.22, 0.0, "arawak_sw"),
+#            ("arawak", 4100, "latia", 0.22, 0.5, "arawak_sw"),
+#            ("arawak", 3000, "saladero", 0.22, 0.0, "arawak_short"),
+#            ("arawak", 3000, "saladero", 0.22, 0.5, "arawak_short"),
+#            ("arawak", 4600, "lagruta", 0.22, 0.0, "arawak_short"),
+#            ("arawak", 4600, "lagruta", 0.22, 0.5, "arawak_short"),
+#            ("tupi", 4400, "encontro", 0.22, 0.0, "tupi_sw"),
+SETTINGS = [("tupi", 5000, "jiparana", 0.22, 0.0, "tupi_sw"),
+            ("tupi", 5000, "jiparana", 0.22, 0.5, "tupi_sw"),
+            ("tupi", 2500, "altamira", 0.22, 0.0, "tupi_e"),
+            ("tupi", 2500, "altamira", 0.22, 0.5, "tupi_e")]
 
-fiss_vals = [i for i in range(50, 151, 50)]
-k_vals = [i for i in range(20, 101, 40)]
-leap_vals = [i for i in range(0, 26, 25)]
+fiss_vals = [i for i in range(50, 151, 25)]
+k_vals = [i for i in range(25, 101, 25)]
+leap_vals = [0] + [i for i in range(15, 31, 5)]
 
 
 for SETTING in SETTINGS:
@@ -67,7 +68,7 @@ for SETTING in SETTINGS:
             for leap_val in leap_vals:
                 combs.append([fiss_val, k_val, leap_val])
 
-    pool = mp.Pool(10)
+    pool = mp.Pool(3)
     res = pool.map(run, combs)
     pool.close()
 
