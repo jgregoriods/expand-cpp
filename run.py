@@ -21,15 +21,15 @@ def grid_y(y):
     return grid_y
 
 
-CULT = "tupi"
-START = 4000
-SITE = "jiparana"
-VEG = 0.5
-FOLDER = "tupi_sw"
+CULT = "arawak"
+START = 4100
+SITE = "yarinacocha"
+VEG = 0.0
+FOLDER = "arawak_sw"
 
 FISS = 125
 K = 25
-LEAP = 0
+LEAP = 25
 
 
 Popen(["./expand", f"--cult={CULT}", f"--date={START}",
