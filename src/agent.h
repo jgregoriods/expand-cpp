@@ -29,6 +29,7 @@ class Agent {
         int get_id();
         int get_x();
         int get_y();
+        bool leaping;
 
     private:
         static int new_id;

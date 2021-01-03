@@ -37,7 +37,8 @@ Agent::Agent(Model& model, int x, int y, int population, int fission_threshold,
     total_k {k},
     permanence {permanence},
     time_here {0},
-    leap_distance {leap_distance} {
+    leap_distance {leap_distance},
+    leaping {true} {
         land.reserve(9);
         // only take ownership immediately if this is the first agent in cell
         // (not from fission)
@@ -54,9 +55,12 @@ Agent::Agent(Model& model, int x, int y, int population, int fission_threshold,
         if (move_cells.size() < 1) {
             for (int i {-2}; i <= 2; ++i)
                 for (int j {-2}; j <= 2; ++j)
-                    if (get_distance(x + i, y + j) == 2)
+                    if (get_distance(x + i, y + j) <= 2)
                         move_cells.push_back(std::make_pair(i, j));
         }
+
+        if (leap_distance == 0)
+            leaping = false;
 }
 
 Agent::~Agent() {}
@@ -76,7 +80,7 @@ void Agent::make_leap_cells(int distance) {
 }
 
 /*
-* Sequene of methods to be executed every tick (year) of the model.
+* Sequence of methods to be executed every tick (year) of the model.
 */
 void Agent::step() {
     grow();
@@ -101,8 +105,8 @@ void Agent::grow() {
 void Agent::update_land() {
     while (population > total_k) {
         std::vector<std::pair<int, int>> cells {check_destinations(neighbors)};
-        if (cells.size() == 0)
-            cells = check_destinations(move_cells);
+        // if (cells.size() == 0)
+        //    cells = check_destinations(move_cells);
         if (cells.size() > 0) {
             std::pair<int, int> best_cell = get_best_cell(cells);
             land.push_back(best_cell);
@@ -127,21 +131,27 @@ void Agent::update_land() {
 */
 void Agent::check_fission() {
     if (population > fission_threshold) {
-        std::vector<std::pair<int, int>> cells = check_destinations(neighbors);
-        if (cells.size() == 0)
-            cells = check_destinations(move_cells);
+        //std::vector<std::pair<int, int>> cells = check_destinations(neighbors);
+        std::vector<std::pair<int, int>> cells = check_destinations(move_cells);
+        // if (cells.size() == 0)
+        //    cells = check_destinations(move_cells);
         if (cells.size() > 0) {
             std::pair<int, int> best_cell = get_best_cell(cells);
             std::unique_ptr<Agent> new_agent = fission();
             new_agent->move(best_cell.first, best_cell.second);
             model->add(new_agent);
-        } else if (leap_distance > 0) {
+        //} else if (leap_distance > 0) {
+        } else if (leaping) {
             std::vector<std::pair<int, int>> destinations = check_leap_cells();
             if (destinations.size() > 0) {
                 std::pair<int, int> best_cell = get_best_cell(destinations);
-                std::unique_ptr<Agent> new_agent = fission();
-                new_agent->move(best_cell.first, best_cell.second);
-                model->add(new_agent);
+                if (model->get_suitability(best_cell.first, best_cell.second) > model->get_suitability(x, y)) {
+                    std::unique_ptr<Agent> new_agent = fission();
+                    new_agent->move(best_cell.first, best_cell.second);
+                    //new_agent->leaping = false;
+                    model->add(new_agent);
+                    leaping = false;
+                }
             }
         }
     }
@@ -167,17 +177,22 @@ std::unique_ptr<Agent> Agent::fission() {
 void Agent::check_move() {
     bool forest_here {model->is_forest(x, y)};
     if (time_here > permanence || !forest_here) {
-        std::vector<std::pair<int, int>> cells = check_empty_cells(neighbors);
-        if (cells.size() == 0)
-            cells = check_empty_cells(move_cells);
+        //std::vector<std::pair<int, int>> cells = check_empty_cells(neighbors);
+        std::vector<std::pair<int, int>> cells = check_empty_cells(move_cells);
+        // if (cells.size() == 0)
+        //     cells = check_empty_cells(move_cells);
         if (cells.size() > 0) {
             std::pair<int, int> best_cell = get_best_cell(cells);
             move(best_cell.first, best_cell.second);
-        } else if (leap_distance > 0) {
+        //} else if (leap_distance > 0) {
+        } else if (leaping) {
             std::vector<std::pair<int, int>> destinations = check_leap_cells();
             if (destinations.size() > 0) {
                 std::pair<int, int> best_cell = get_best_cell(destinations);
+                if (model->get_suitability(best_cell.first, best_cell.second) > model->get_suitability(x, y)) {
                     move(best_cell.first, best_cell.second);
+                    leaping = false;
+                }
             }
         }
     }

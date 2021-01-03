@@ -141,21 +141,22 @@ std::pair<double, int> Model::get_score() {
     for (auto& date: dates) {
         std::pair<int, int> cell {grid.to_grid(date->get_x(), date->get_y())};
         int x {cell.first}, y {cell.second};
+        int date_in_cell {grid.arrival[y][x]};
         std::vector<int> sim_dates;
-        for (int i {-5}; i <= 5; ++i) {
-            for (int j {-5}; j <= 5; ++j) {
-                int sim_bp {grid.arrival[y+j][x+i]};
-                if (sim_bp > -1)
-                    sim_dates.push_back(sim_bp);
+        if (date_in_cell == -1) {
+            for (int i {-1}; i <= 1; ++i) {
+                for (int j {-1}; j <= 1; ++j) {
+                    int sim_bp {grid.arrival[y+j][x+i]};
+                    if (sim_bp > -1)
+                        sim_dates.push_back(sim_bp);
+                }
             }
+            if (sim_dates.size() > 0)
+                date_in_cell = sim_dates[0];
         }
         int date_sum {};
-        for (int sim_date: sim_dates)
-            date_sum += sim_date;
-        int avg_sim_bp {};
-        if (sim_dates.size() > 0)
-            avg_sim_bp = date_sum / sim_dates.size();
-        date->set_prob(avg_sim_bp);
+        date->set_prob(date_in_cell);
+        date->year = date_in_cell;
         total += date->get_prob();
         if (date->get_prob() > 0.0)
             ++num_dates;
@@ -194,9 +195,9 @@ void Model::write_asc() {
 void Model::write_dates() {
     std::ofstream file;
     file.open("output/dates.csv");
-    file << "x,y,score\n";
+    file << "x,y,score,year\n";
     for (auto& date: dates)
-        file << date->get_x() << ", " << date->get_y() << ", " << date->get_prob() << "\n";
+        file << date->get_x() << ", " << date->get_y() << ", " << date->get_prob() << ", " << date->year << "\n";
     file.close();
 }
 

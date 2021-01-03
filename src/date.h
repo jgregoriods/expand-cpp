@@ -12,6 +12,7 @@ class Date {
         double get_y();
         void set_prob(int year);
         double get_prob();
+        int year;
     private:
         double x;
         double y;

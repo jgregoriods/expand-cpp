@@ -21,13 +21,25 @@ def show_bar(it, size):
         print("\n")
 
 
-SETTINGS = [("arawak", 4100, "yarinacocha", 0.22, 0.0, "arawak_sw"),
-            ("arawak", 4100, "yarinacocha", 0.22, 0.5, "arawak_sw")]
+SETTINGS = [("tupi", 2400, "bvista", 0.0, -1.0, "tupi_e"),
+            ("tupi", 2400, "bvista", 0.0, 0.5, "tupi_e")]
 
-fiss_vals = [i for i in range(50, 151, 25)]
-k_vals = [i for i in range(25, 101, 25)]
-leap_vals = [0] + [i for i in range(15, 31, 5)]
+PARAMS = []
 
+large = [150, 100]
+medium = [100, 50]
+small = [50, 10]
+
+fiss_vals = [i for i in range(50, 151, 10)]
+k_vals = [i for i in range(10, 101, 10)]
+leap_vals = [0, 5, 10, 15]
+
+"""
+for i in leap_vals:
+    PARAMS.append(large + [i])
+    PARAMS.append(medium + [i])
+    PARAMS.append(small + [i])
+"""
 
 for SETTING in SETTINGS:
 
@@ -57,10 +69,12 @@ for SETTING in SETTINGS:
     for fiss_val in fiss_vals:
         for k_val in k_vals:
             for leap_val in leap_vals:
-                combs.append([fiss_val, k_val, leap_val])
+                if fiss_val > k_val:
+                    combs.append([fiss_val, k_val, leap_val])
 
-    pool = mp.Pool(10)
+    pool = mp.Pool(3)
     res = pool.map(run, combs)
+    #res = pool.map(run, PARAMS)
     pool.close()
 
     with open(f"res{int(time.time())}.csv", "w") as f:

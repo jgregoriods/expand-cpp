@@ -21,21 +21,21 @@ def grid_y(y):
     return grid_y
 
 
-CULT = "arawak"
-START = 4100
-SITE = "yarinacocha"
-VEG = 0.0
-FOLDER = "arawak_sw"
+CULT = "tupi"
+START = 4400
+SITE = "encontro"
+VEG = 0.5
+FOLDER = "tupi_sw"
 
-FISS = 125
-K = 25
-LEAP = 25
+FISS = 150
+K = 40
+LEAP = 10
 
 
 Popen(["./expand", f"--cult={CULT}", f"--date={START}",
         f"--date-folder={FOLDER}", f"--site={SITE}",
         f"--fiss={FISS}", f"--k={K}", "--perm=10",
-        f"--leap={LEAP}", "--max=0.22",
+        f"--leap={LEAP}", "--max=0.0",
         f"--veg={VEG}", "--write", "--show-bar"]).wait()
 
 a = np.vstack(np.loadtxt("./output/arrival.asc", skiprows=6).astype(float))
