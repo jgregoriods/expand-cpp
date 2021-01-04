@@ -21,7 +21,9 @@ def show_bar(it, size):
         print("\n")
 
 
-SETTINGS = [("tupi", 2400, "bvista", 0.0, -1.0, "tupi_e"),
+SETTINGS = [("tupi", 4400, "encontro", 0.0, -1.0, "tupi_sw"),
+            ("tupi", 4400, "encontro", 0.0, 0.5, "tupi_sw"),
+            ("tupi", 2400, "bvista", 0.0, -1.0, "tupi_e"),
             ("tupi", 2400, "bvista", 0.0, 0.5, "tupi_e")]
 
 PARAMS = []
@@ -72,12 +74,12 @@ for SETTING in SETTINGS:
                 if fiss_val > k_val:
                     combs.append([fiss_val, k_val, leap_val])
 
-    pool = mp.Pool(3)
+    pool = mp.Pool(11)
     res = pool.map(run, combs)
     #res = pool.map(run, PARAMS)
     pool.close()
 
-    with open(f"res{int(time.time())}.csv", "w") as f:
+    with open(f"res_3pct_{int(time.time())}.csv", "w") as f:
         f.write("fiss,k,leap,score,dates\n")
         for r in res:
             for k in r:
