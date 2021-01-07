@@ -30,7 +30,7 @@ Agent::Agent(Model& model, int x, int y, int population, int fission_threshold,
     model {&model},
     x {x},
     y {y},
-    r {0.03}, // growth rate is kept constant (2.5%) in all models
+    r {0.025}, // growth rate is kept constant (2.5%) in all models
     population {population},
     fission_threshold {fission_threshold},
     k {k},
