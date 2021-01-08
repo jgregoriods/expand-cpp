@@ -25,14 +25,14 @@ std::vector<std::pair<int, int>> Agent::neighbors {std::make_pair(-1, -1),
 std::vector<std::pair<int, int>> Agent::move_cells = {};
 
 Agent::Agent(Model& model, int x, int y, int population, int fission_threshold,
-             int k, int permanence, int leap_distance) :
+             double r, int k, int permanence, int leap_distance) :
     id {new_id++},
     model {&model},
     x {x},
     y {y},
-    r {0.025}, // growth rate is kept constant (2.5%) in all models
     population {population},
     fission_threshold {fission_threshold},
+    r {r},
     k {k},
     total_k {k},
     permanence {permanence},
@@ -164,7 +164,7 @@ void Agent::check_fission() {
 std::unique_ptr<Agent> Agent::fission() {
     population /= 2;
     auto agent = std::make_unique<Agent>(*model, x, y, population, fission_threshold,
-                                         k, permanence, leap_distance);
+                                         r, k, permanence, leap_distance);
     return std::move(agent);
 }
 

@@ -13,18 +13,19 @@
 #include "model.h"
 
 struct Options {
-    int start_date {4100};
+    int start_date {4400};
     int fission_threshold {100};
     int k {20};
     int permanence {10};
     int leap_distance {15};
-    std::string culture {"arawak"};
-    std::string origin {"latia"};
-    std::string date_folder {"arawak_sw"};
+    std::string culture {"tupi"};
+    std::string origin {"encontro"};
+    std::string date_folder {"tupi"};
     bool show_bar {false};
     bool write_files {false};
     double forest {0.0};
     double maxent {0.0};
+    double r {0.025};
     Options(std::vector<std::string> args) {
         for (auto str: args) {
             if (str.substr(0, 7) == "--date=")
@@ -35,8 +36,10 @@ struct Options {
                 fission_threshold = std::stoi(str.substr(7, str.length()));
             else if (str.substr(0, 4) == "--k=")
                 k = std::stoi(str.substr(4, str.length()));
+            else if (str.substr(0, 4) == "--r=")
+                r = std::stoi(str.substr(4, str.length()));
             else if (str.substr(0, 7) == "--perm=")
-                permanence = std::stoi(str.substr(7, str.length()));
+                permanence = std::stod(str.substr(7, str.length()));
             else if (str.substr(0, 7) == "--leap=")
                 leap_distance = std::stoi(str.substr(7, str.length()));
             else if (str.substr(0, 7) == "--cult=")
@@ -62,7 +65,7 @@ int main(const int argc, const char* argv[]) {
     Model model(opts.culture, opts.start_date, opts.maxent, opts.forest, opts.date_folder);
     auto coords = model.get_coords(opts.origin);
     auto grid_coords = model.to_grid(coords.first, coords.second);
-    model.setup(grid_coords, opts.fission_threshold, opts.k, opts.permanence, opts.leap_distance);
+    model.setup(grid_coords, opts.fission_threshold, opts.r, opts.k, opts.permanence, opts.leap_distance);
     model.run(opts.start_date - 600, opts.write_files, opts.show_bar);
     return 0;
 }

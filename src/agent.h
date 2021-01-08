@@ -10,7 +10,7 @@ class Model;
 class Agent {
     public:
         Agent(Model& model, int x, int y, int population, int fission_threshold,
-              int k, int permanence, int leap_distance);
+              double r, int k, int permanence, int leap_distance);
         ~Agent();
         void make_leap_cells(int distance);
         void step();

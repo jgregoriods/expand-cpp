@@ -6,7 +6,7 @@
 
 #include "date.h"
 
-Date::Date(std::string filename) : prob {0.0}, year {-1} {
+Date::Date(std::string filename) : prob {0.0}, year {-1}, name {filename} {
     read_file(filename);
 }
 
@@ -48,4 +48,8 @@ void Date::set_prob(int year) {
 
 double Date::get_prob() {
     return prob;
+}
+
+std::string Date::get_name() {
+    return name;
 }

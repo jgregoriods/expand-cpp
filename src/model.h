@@ -16,7 +16,7 @@ class Model {
     public:
         Model(std::string culture, int start_date, double maxent, double forest,
               std::string date_folder);
-        void setup(std::pair<int, int> coords, int fission_threshold, int k,
+        void setup(std::pair<int, int> coords, int fission_threshold, double r, int k,
                    int permanence, int leap_distance);
         void run(int n, bool write_files=false, bool show_progress=false);
         void step(bool write_files=false);

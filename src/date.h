@@ -12,8 +12,10 @@ class Date {
         double get_y();
         void set_prob(int year);
         double get_prob();
-        int year;
+        std::string get_name();
+        int year; // remove
     private:
+        std::string name;
         double x;
         double y;
         double prob;

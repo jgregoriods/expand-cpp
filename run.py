@@ -25,11 +25,11 @@ CULT = "tupi"
 START = 4400
 SITE = "encontro"
 VEG = 0.5
-FOLDER = "tupi_sw"
+FOLDER = "tupi"
 
-FISS = 150
-K = 40
-LEAP = 10
+FISS = 50
+K = 20
+LEAP = 15
 
 
 Popen(["./expand", f"--cult={CULT}", f"--date={START}",

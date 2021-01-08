@@ -21,10 +21,8 @@ def show_bar(it, size):
         print("\n")
 
 
-SETTINGS = [("tupi", 4400, "encontro", 0.0, -1.0, "tupi_sw"),
-            ("tupi", 4400, "encontro", 0.0, 0.5, "tupi_sw"),
-            ("tupi", 2400, "bvista", 0.0, -1.0, "tupi_e"),
-            ("tupi", 2400, "bvista", 0.0, 0.5, "tupi_e")]
+SETTINGS = [("tupi", 4400, "encontro", 0.0, -1.0, "tupi"),
+            ("tupi", 4400, "encontro", 0.0, 0.5, "tupi")]
 
 PARAMS = []
 

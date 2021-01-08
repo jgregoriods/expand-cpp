@@ -25,10 +25,10 @@ Model::Model(std::string culture, int start_date, double maxent, double forest,
         dates.reserve(100);
 }
 
-void Model::setup(std::pair<int, int> coords, int fission_threshold,
+void Model::setup(std::pair<int, int> coords, int fission_threshold, double r,
                   int k, int permanence, int leap_distance) {
     auto agent = std::make_unique<Agent>(*this, coords.first, coords.second, fission_threshold,
-                                         fission_threshold, k, permanence, leap_distance);
+                                         fission_threshold, r, k, permanence, leap_distance);
     add(agent);
     record_date(coords.first, coords.second);
 }
