@@ -27,7 +27,7 @@ Model::Model(std::string culture, int start_date, double maxent, double forest,
 
 void Model::setup(std::pair<int, int> coords, int fission_threshold, double r,
                   int k, int permanence, int leap_distance) {
-    auto agent = std::make_unique<Agent>(*this, coords.first, coords.second, fission_threshold,
+    auto agent = std::make_unique<Agent>(*this, coords.first, coords.second, (double) fission_threshold,
                                          fission_threshold, r, k, permanence, leap_distance);
     add(agent);
     record_date(coords.first, coords.second);
@@ -195,9 +195,9 @@ void Model::write_asc() {
 void Model::write_dates() {
     std::ofstream file;
     file.open("output/dates.csv");
-    file << "x,y,score,year\n";
+    file << "name,x,y,score,year\n";
     for (auto& date: dates)
-        file << date->get_x() << ", " << date->get_y() << ", " << date->get_prob() << ", " << date->year << "\n";
+        file << date->get_name() << ", " << date->get_x() << ", " << date->get_y() << ", " << date->get_prob() << ", " << date->year << "\n";
     file.close();
 }
 

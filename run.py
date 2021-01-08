@@ -30,23 +30,24 @@ FOLDER = "tupi"
 FISS = 50
 K = 20
 LEAP = 15
+R = 0.02
 
 
 Popen(["./expand", f"--cult={CULT}", f"--date={START}",
         f"--date-folder={FOLDER}", f"--site={SITE}",
         f"--fiss={FISS}", f"--k={K}", "--perm=10",
-        f"--leap={LEAP}", "--max=0.0",
+        f"--leap={LEAP}", "--max=0.0", f"--r={R}",
         f"--veg={VEG}", "--write", "--show-bar"]).wait()
 
 a = np.vstack(np.loadtxt("./output/arrival.asc", skiprows=6).astype(float))
 a[a == -1] = np.nan
-dates = pd.read_csv("./output/dates.csv", header=None).loc[1:,:1]
-dates[0] = dates[0].astype(pd.np.float64)
-dates[0] = [grid_x(x) for x in dates[0]]
+dates = pd.read_csv("./output/dates.csv", header=None).loc[1:,1:2]
 dates[1] = dates[1].astype(pd.np.float64)
-dates[1] = [grid_y(y) for y in dates[1]]
+dates[1] = [grid_x(x) for x in dates[1]]
+dates[2] = dates[2].astype(pd.np.float64)
+dates[2] = [grid_y(y) for y in dates[2]]
 dates = dates.values
-scores = pd.read_csv("./output/dates.csv", header=None).loc[1:,2]
+scores = pd.read_csv("./output/dates.csv", header=None).loc[1:,3]
 scores = scores.astype(pd.np.float64)
 scores = scores.values
 scores = [ceil(i) for i in scores]

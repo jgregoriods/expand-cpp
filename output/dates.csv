@@ -1,9 +1,9 @@
-x,y,score,year
-1.26724e+06, 3.04673e+06, 0, 3273
-1.22065e+06, 2.0506e+06, 0.0937702, 3215
-1.71512e+06, 974134, 0.000549691, 2752
-1.04797e+06, 2.97745e+06, 0, 3274
-2.31799e+06, 2.10562e+06, 0, 2775
-787924, 1.20189e+06, 0.00205628, 2007
-1.71512e+06, 974134, 0, 2752
-1.22065e+06, 2.0506e+06, 0, 3215
+name,x,y,score,year
+dates/tupi/bela_vista.txt, 1.26724e+06, 3.04673e+06, 0, 2809
+dates/tupi/alto_parana.txt, 787924, 1.20189e+06, 0, 678
+dates/tupi/sauipe.txt, 2.31799e+06, 2.10562e+06, 0, 2183
+dates/tupi/morro_grande_b.txt, 1.71512e+06, 974134, 0.296193, 1802
+dates/tupi/pedra_talhada_b.txt, 1.22065e+06, 2.0506e+06, 0, 2589
+dates/tupi/morro_grande_a.txt, 1.71512e+06, 974134, 0, 1802
+dates/tupi/caldeirao.txt, 1.04797e+06, 2.97745e+06, 0, 2853
+dates/tupi/pedra_talhada_a.txt, 1.22065e+06, 2.0506e+06, 0, 2589

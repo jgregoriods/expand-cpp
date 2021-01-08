@@ -37,7 +37,7 @@ struct Options {
             else if (str.substr(0, 4) == "--k=")
                 k = std::stoi(str.substr(4, str.length()));
             else if (str.substr(0, 4) == "--r=")
-                r = std::stoi(str.substr(4, str.length()));
+                r = std::stod(str.substr(4, str.length()));
             else if (str.substr(0, 7) == "--perm=")
                 permanence = std::stod(str.substr(7, str.length()));
             else if (str.substr(0, 7) == "--leap=")

@@ -3,9 +3,37 @@ library(sp)
 library(ggplot2)
 library(raster)
 library(viridis)
+library(rcarbon)
 
-plotDates <- function() {
-
+plotDates <- function(dates) {
+    a <- calibrate(dates$C14Age, dates$C14SD, calCurves="shcal20")
+    res <- matrix(ncol=4, nrow=length(a))
+    for (i in 1:length(a)) {
+        m <- as.numeric(summary(a[i])$MedianBP)
+        min_bp <- as.numeric(strsplit(as.character(summary(a[i])["TwoSigma_BP_1"][1,]), " ")[[1]][1])
+        for (j in 1:4) {
+            if (paste("TwoSigma_BP_", j, sep="") %in% colnames(summary(a[i]))) {
+                last <- paste("TwoSigma_BP_", j, sep="")
+            }
+        }
+        max_bp <- as.numeric(strsplit(as.character(summary(a[i])[last][1,]), " ")[[1]][3])
+        res[i, 1] <- as.character(dates[i,]$Site)
+        res[i, 2] <- as.numeric(m)
+        res[i, 3] <- as.numeric(min_bp)
+        res[i, 4] <- as.numeric(max_bp)
+    }
+    res <- as.data.frame(res)
+    colnames(res) <- c("site", "median", "min_bp", "max_bp")
+    res$site <- as.character(res$site)
+    res$median <- as.numeric(as.character(res$median))
+    res$min_bp <- as.numeric(as.character(res$min_bp))
+    res$max_bp <- as.numeric(as.character(res$max_bp))
+    
+    g <- ggplot() +
+            geom_errorbarh(res, mapping=aes(y=site, xmin=max_bp, xmax=min_bp), height=0.2) +
+            geom_point(res, mapping=aes(y=site, x=median)) +
+            theme_classic()
+    return(g)
 }
 
 plotMap <- function(folder) {

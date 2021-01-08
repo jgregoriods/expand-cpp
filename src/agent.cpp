@@ -24,7 +24,7 @@ std::vector<std::pair<int, int>> Agent::neighbors {std::make_pair(-1, -1),
 
 std::vector<std::pair<int, int>> Agent::move_cells = {};
 
-Agent::Agent(Model& model, int x, int y, int population, int fission_threshold,
+Agent::Agent(Model& model, int x, int y, double population, int fission_threshold,
              double r, int k, int permanence, int leap_distance) :
     id {new_id++},
     model {&model},
@@ -93,7 +93,7 @@ void Agent::step() {
 * max density/carrying capactiy has been reached.
 */
 void Agent::grow() {
-    population += round(population * r);
+    population += (population * r);
     update_land();
 }
 
