@@ -22,20 +22,21 @@ def grid_y(y):
 
 
 CULT = "tupi"
-START = 4400
-SITE = "encontro"
-VEG = 0.4
+START = 5800
+SITE = "urupa"
+VEG = -1.0
 FOLDER = "tupi"
 
-FISS = 150
-K = 50
-LEAP = 5
+FISS = 50
+K = 10
+LEAP = 0
 R = 0.02
+PERM = 10
 
 
 Popen(["./expand", f"--cult={CULT}", f"--date={START}",
         f"--date-folder={FOLDER}", f"--site={SITE}",
-        f"--fiss={FISS}", f"--k={K}", "--perm=10",
+        f"--fiss={FISS}", f"--k={K}", f"--perm={PERM}",
         f"--leap={LEAP}", "--max=0.0", f"--r={R}",
         f"--veg={VEG}", "--write", "--show-bar"]).wait()
 

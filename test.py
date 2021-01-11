@@ -24,10 +24,12 @@ def show_bar(it, size):
 SETTINGS = [(4400, "encontro"), (5800, "urupa")]
 
 veg_vals = [-1.0, 0.4, 0.5, 0.6]
+max_vals = [0.0, 0.23]
 fiss_vals = [50, 100, 150]
 r_vals = [0.02, 0.03, 0.04]
 k_vals = [10, 50, 100]
 leap_vals = [0, 5, 10, 15]
+perm_vals = [10, 30]
 
 for SETTING in SETTINGS:
 
@@ -36,15 +38,17 @@ for SETTING in SETTINGS:
     
     def run(vals):
         veg_val = vals[0]
-        fiss_val = vals[1]
-        r_val = vals[2]
-        k_val = vals[3]
-        leap_val = vals[4]
-        params = f"{veg_val} {fiss_val} {r_val} {k_val} {leap_val}"
+        max_val = vals[1]
+        fiss_val = vals[2]
+        r_val = vals[3]
+        k_val = vals[4]
+        leap_val = vals[5]
+        perm_val = vals[6]
+        params = f"{veg_val} {max_val} {fiss_val} {r_val} {k_val} {leap_val} {perm_val}"
         result = Popen(["./expand", f"--cult=tupi", f"--date={START}",
                         f"--date-folder=tupi", f"--site={SITE}",
-                        f"--fiss={fiss_val}", f"--k={k_val}", f"--perm=10",
-                        f"--leap={leap_val}", f"--max=0.0",
+                        f"--fiss={fiss_val}", f"--k={k_val}", f"--perm={perm_val}",
+                        f"--leap={leap_val}", f"--max={max_val}",
                         f"--veg={veg_val}", f"--r={r_val}"],
                         stdout=PIPE).communicate()[0]
         result = result.strip().split()
@@ -53,22 +57,24 @@ for SETTING in SETTINGS:
 
     combs = []
     for veg_val in veg_vals:
-        for fiss_val in fiss_vals:
-            for r_val in r_vals:
-                for k_val in k_vals:
-                    for leap_val in leap_vals:
-                        if fiss_val > k_val:
-                            combs.append([veg_val, fiss_val, r_val, k_val, leap_val])
+        for max_val in max_vals:
+            for fiss_val in fiss_vals:
+                for r_val in r_vals:
+                    for k_val in k_vals:
+                        for leap_val in leap_vals:
+                            for perm_val in perm_vals:
+                                if fiss_val > k_val:
+                                    combs.append([veg_val, max_val, fiss_val, r_val, k_val, leap_val, perm_val])
 
-    pool = mp.Pool(3)
+    pool = mp.Pool(11)
     res = pool.map(run, combs)
     #res = pool.map(run, PARAMS)
     pool.close()
 
     with open(f"res{int(time.time())}.csv", "w") as f:
-        f.write("veg,fiss,r,k,leap,score,dates\n")
+        f.write("veg,max,fiss,r,k,leap,perm,score,dates\n")
         for r in res:
             for k in r:
                 params = k.split(' ')
-                f.write(f"{params[0]},{params[1]},{params[2]},{params[3]},{params[4]},{float(r[k][0])},{int(r[k][1])}\n")
+                f.write(f"{params[0]},{params[1]},{params[2]},{params[3]},{params[4]},{params[5]},{params[6]},{float(r[k][0])},{int(r[k][1])}\n")
         f.write(f"\nCult: tupi | Start: {START} | Site: {SITE}")

@@ -5,33 +5,74 @@ library(raster)
 library(viridis)
 library(rcarbon)
 
-plotDates <- function(dates) {
-    a <- calibrate(dates$C14Age, dates$C14SD, calCurves="shcal20")
-    res <- matrix(ncol=4, nrow=length(a))
-    for (i in 1:length(a)) {
-        m <- as.numeric(summary(a[i])$MedianBP)
-        min_bp <- as.numeric(strsplit(as.character(summary(a[i])["TwoSigma_BP_1"][1,]), " ")[[1]][1])
+
+
+plotDates <- function(folder1, folder2=NULL, folder3=NULL, folder4=NULL) {
+    long <- read.csv("tupi_final_long.csv")
+    short <- read.csv("tupi_final_short.csv")
+
+    long_cal <- calibrate(long$C14Age, long$C14SD, calCurves="shcal20")
+    res <- matrix(ncol=4, nrow=length(long_cal))
+    for (i in 1:length(long_cal)) {
+        m <- as.numeric(summary(long_cal[i])$MedianBP)
+        min_bp <- as.numeric(strsplit(as.character(summary(long_cal[i])["TwoSigma_BP_1"][1,]), " ")[[1]][1])
         for (j in 1:4) {
-            if (paste("TwoSigma_BP_", j, sep="") %in% colnames(summary(a[i]))) {
+            if (paste("TwoSigma_BP_", j, sep="") %in% colnames(summary(long_cal[i]))) {
                 last <- paste("TwoSigma_BP_", j, sep="")
             }
         }
-        max_bp <- as.numeric(strsplit(as.character(summary(a[i])[last][1,]), " ")[[1]][3])
-        res[i, 1] <- as.character(dates[i,]$Site)
+        max_bp <- as.numeric(strsplit(as.character(summary(long_cal[i])[last][1,]), " ")[[1]][3])
+        res[i, 1] <- as.character(long[i,]$Region)
         res[i, 2] <- as.numeric(m)
         res[i, 3] <- as.numeric(min_bp)
         res[i, 4] <- as.numeric(max_bp)
     }
     res <- as.data.frame(res)
-    colnames(res) <- c("site", "median", "min_bp", "max_bp")
-    res$site <- as.character(res$site)
+    colnames(res) <- c("Region", "median", "min_bp", "max_bp")
+    res$site <- as.character(res$Region)
     res$median <- as.numeric(as.character(res$median))
     res$min_bp <- as.numeric(as.character(res$min_bp))
     res$max_bp <- as.numeric(as.character(res$max_bp))
-    
+
+    short_cal <- calibrate(short$C14Age, short$C14SD, calCurves="shcal20")
+    res1 <- matrix(ncol=4, nrow=length(short_cal))
+    for (i in 1:length(short_cal)) {
+        m <- as.numeric(summary(short_cal[i])$MedianBP)
+        min_bp <- as.numeric(strsplit(as.character(summary(short_cal[i])["TwoSigma_BP_1"][1,]), " ")[[1]][1])
+        for (j in 1:4) {
+            if (paste("TwoSigma_BP_", j, sep="") %in% colnames(summary(short_cal[i]))) {
+                last <- paste("TwoSigma_BP_", j, sep="")
+            }
+        }
+        max_bp <- as.numeric(strsplit(as.character(summary(short_cal[i])[last][1,]), " ")[[1]][3])
+        res1[i, 1] <- as.character(short[i,]$Region)
+        res1[i, 2] <- as.numeric(m)
+        res1[i, 3] <- as.numeric(min_bp)
+        res1[i, 4] <- as.numeric(max_bp)
+    }
+    res1 <- as.data.frame(res1)
+    colnames(res1) <- c("Region", "median", "min_bp", "max_bp")
+    res1$site <- as.character(res1$Region)
+    res1$median <- as.numeric(as.character(res1$median))
+    res1$min_bp <- as.numeric(as.character(res1$min_bp))
+    res1$max_bp <- as.numeric(as.character(res1$max_bp))
+
+    encontro_veg <- read.csv(paste(folder1, "/dates.csv", sep=""))
+    urupa_veg <-read.csv(paste(folder2, "/dates.csv", sep=""))
+    encontro_noveg <- read.csv(paste(folder3, "/dates.csv", sep=""))
+    encontro_noveg <- encontro_noveg[encontro_noveg$year != -1,]
+    urupa_noveg <- read.csv(paste(folder4, "/dates.csv", sep=""))
+    urupa_noveg <- urupa_noveg[urupa_noveg$year != -1,]
+
     g <- ggplot() +
-            geom_errorbarh(res, mapping=aes(y=site, xmin=max_bp, xmax=min_bp), height=0.2) +
-            geom_point(res, mapping=aes(y=site, x=median)) +
+            geom_errorbarh(res, mapping=aes(y=Region, xmin=max_bp, xmax=min_bp), colour="grey", height=0.2) +
+            geom_point(res, mapping=aes(y=Region, x=median), shape=21, size=2, fill="white", colour="grey") +
+            geom_errorbarh(res1, mapping=aes(y=Region, xmin=max_bp, xmax=min_bp), height=0.2) +
+            geom_point(res1, mapping=aes(y=Region, x=median), shape=21, size=2, fill="white") +
+            geom_point(encontro_noveg, mapping=aes(y=Region, x=year), shape=21, size=2, fill="yellow") +
+            geom_point(urupa_noveg, mapping=aes(y=Region, x=year), shape=23, size=2, fill="yellow") +
+            geom_point(encontro_veg, mapping=aes(y=Region, x=year), shape=21, size=2, fill="green") +
+            geom_point(urupa_veg, mapping=aes(y=Region, x=year), shape=23, size=2, fill="green") +
             theme_classic()
     return(g)
 }
