@@ -59,11 +59,11 @@ plotMap <- function(folder) {
                 geom_polygon(data=sam, aes(x = long, y = lat, group = id),
                              colour=NA, fill=NA) +
                 geom_raster(aes(fill=arrival)) +
-                scale_fill_viridis(option="plasma") +
+                scale_fill_viridis() +
                 geom_polygon(data=sam, aes(x = long, y = lat, group = id),
                              colour="black", fill=NA, lwd=0.4) +
-                geom_point(data=dates_right, aes(x=x, y=y), shape=21, size=3, fill="white", colour="black") +
                 geom_point(data=dates_wrong, aes(x=x, y=y), shape=21, size=3, fill="black", colour="white") +
+                geom_point(data=dates_right, aes(x=x, y=y), shape=21, size=3, fill="white", colour="black") +                
                 theme_bw() +
                 coord_equal() +
                 theme(panel.grid.major = element_blank(),

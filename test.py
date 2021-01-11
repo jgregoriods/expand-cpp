@@ -60,7 +60,7 @@ for SETTING in SETTINGS:
                         if fiss_val > k_val:
                             combs.append([veg_val, fiss_val, r_val, k_val, leap_val])
 
-    pool = mp.Pool(11)
+    pool = mp.Pool(3)
     res = pool.map(run, combs)
     #res = pool.map(run, PARAMS)
     pool.close()
