@@ -5,9 +5,25 @@ library(raster)
 library(viridis)
 library(rcarbon)
 
+get_regions <- function(names) {
+    regions <- as.character(names)
+    for (i in 1:length(names)) {
+        if (names[i] == "dates/tupi/queimada_nova.txt") {
+            regions[i] <- "NE"
+        } else if (names[i] == "dates/tupi/alto_parana.txt") {
+            regions[i] <- "PAR"
+        } else if (names[i] == "dates/tupi/morro_grande_b.txt") {
+            regions[i] <- "ATL"
+        } else if (names[i] == "dates/tupi/pedra_talhada_b.txt") {
+            regions[i] <- "CO"
+        } else if (names[i] == "dates/tupi/caldeirao.txt") {
+            regions[i] <- "EAM"
+        }
+    }
+    return (regions)
+}
 
-
-plotDates <- function(folder1, folder2=NULL, folder3=NULL, folder4=NULL) {
+plotDates <- function() {
     long <- read.csv("tupi_final_long.csv")
     short <- read.csv("tupi_final_short.csv")
 
@@ -57,12 +73,17 @@ plotDates <- function(folder1, folder2=NULL, folder3=NULL, folder4=NULL) {
     res1$min_bp <- as.numeric(as.character(res1$min_bp))
     res1$max_bp <- as.numeric(as.character(res1$max_bp))
 
-    encontro_veg <- read.csv(paste(folder1, "/dates.csv", sep=""))
-    urupa_veg <-read.csv(paste(folder2, "/dates.csv", sep=""))
-    encontro_noveg <- read.csv(paste(folder3, "/dates.csv", sep=""))
-    encontro_noveg <- encontro_noveg[encontro_noveg$year != -1,]
-    urupa_noveg <- read.csv(paste(folder4, "/dates.csv", sep=""))
-    urupa_noveg <- urupa_noveg[urupa_noveg$year != -1,]
+    encontro_veg <- read.csv("encontro_v/dates.csv")
+    encontro_veg$Region <- get_regions(encontro_veg$name)
+
+    urupa_veg <-read.csv("urupa_v/dates.csv")
+    urupa_veg$Region <- get_regions(urupa_veg$name)
+    
+    encontro_noveg <- read.csv("encontro/dates.csv")
+    encontro_noveg$Region <- get_regions(encontro_noveg$name)
+
+    urupa_noveg <- read.csv("urupa/dates.csv")
+    urupa_noveg$Region <- get_regions(urupa_noveg$name)
 
     g <- ggplot() +
             geom_errorbarh(res, mapping=aes(y=Region, xmin=max_bp, xmax=min_bp), colour="grey", height=0.2) +
@@ -73,6 +94,7 @@ plotDates <- function(folder1, folder2=NULL, folder3=NULL, folder4=NULL) {
             geom_point(urupa_noveg, mapping=aes(y=Region, x=year), shape=23, size=2, fill="yellow") +
             geom_point(encontro_veg, mapping=aes(y=Region, x=year), shape=21, size=2, fill="green") +
             geom_point(urupa_veg, mapping=aes(y=Region, x=year), shape=23, size=2, fill="green") +
+            xlim(1000, 3500) +
             theme_classic()
     return(g)
 }

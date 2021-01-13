@@ -22,8 +22,8 @@ def grid_y(y):
 
 
 CULT = "tupi"
-START = 4400
-SITE = "encontro"
+START = 5800
+SITE = "urupa"
 VEG = 0.4
 FOLDER = "tupi"
 
