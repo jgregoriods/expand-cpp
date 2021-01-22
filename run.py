@@ -24,13 +24,13 @@ def grid_y(y):
 CULT = "tupi"
 START = 4400
 SITE = "encontro"
-VEG = 0.4
+VEG = -1.0
 FOLDER = "tupi"
 
 FISS = 150
 K = 100
 LEAP = 5
-R = 0.03
+R = 0.02
 PERM = 30
 
 
