@@ -15,8 +15,8 @@ Grid::Grid(int height, int width, std::string name, int start) :
         elevation = layer_from_file("layers/ele.asc");
         std::string maxent_path {"layers/maxent/" + name + ".asc"};
         suitability = layer_from_file(maxent_path);
-        int century {(int)(std::ceil(start / 100.0) * 100)};
-        std::string veg_path {"layers/veg/veg" + std::to_string(century) + ".asc"};
+        int year {(int)(std::ceil(start / 25.0) * 25)};
+        std::string veg_path {"layers/veg/veg" + std::to_string(year) + ".asc"};
         vegetation = layer_from_file(veg_path);
 }
 

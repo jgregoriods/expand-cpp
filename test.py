@@ -29,7 +29,7 @@ fiss_vals = [50, 100, 150]
 r_vals = [0.02, 0.03, 0.04]
 k_vals = [10, 50, 100]
 leap_vals = [0, 5, 10, 15]
-perm_vals = [10, 30]
+perm_vals = [10, 20, 30]
 
 for SETTING in SETTINGS:
 
