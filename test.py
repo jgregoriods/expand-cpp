@@ -21,10 +21,10 @@ def show_bar(it, size):
         print("\n")
 
 
-SETTINGS = [(4400, "encontro"), (5800, "urupa")]
+SETTINGS = [(4400, "encontro")]#, (5800, "urupa")]
 
 veg_vals = [-1.0, 0.4, 0.5, 0.6]
-max_vals = [0.0, 0.23]
+max_vals = [0.0, 0.05, 0.11, 0.23]
 fiss_vals = [50, 100, 150]
 r_vals = [0.02, 0.03, 0.04]
 k_vals = [10, 50, 100]

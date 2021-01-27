@@ -66,6 +66,6 @@ int main(const int argc, const char* argv[]) {
     auto coords = model.get_coords(opts.origin);
     auto grid_coords = model.to_grid(coords.first, coords.second);
     model.setup(grid_coords, opts.fission_threshold, opts.r, opts.k, opts.permanence, opts.leap_distance);
-    model.run(opts.start_date - 600, opts.write_files, opts.show_bar);
+    model.run(opts.start_date - 500, opts.write_files, opts.show_bar);
     return 0;
 }
