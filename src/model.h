@@ -5,12 +5,18 @@
 #include <vector>
 
 #include "agent.h"
-#include "date.h"
+//#include "date.h"
 #include "grid.h"
 
 class Agent;
-class Date;
 class Grid;
+
+struct Date {
+    std::string name {};
+    double x {};
+    double y {};
+    int date {};
+};
 
 class Model {
     public:
@@ -33,7 +39,7 @@ class Model {
         int count_agents();
         void update_env();
         void load_dates();
-        std::pair<double, int> get_score();
+        double get_score();
         void write_snapshot();
         void write_asc();
         void write_dates();
@@ -42,6 +48,7 @@ class Model {
         bool is_forest(int x, int y);
         std::pair<int, int> to_grid(double x, double y);
         std::pair<double, double> get_coords(std::string site_name);
+        std::vector<Date> dates;
     private:
         double SUIT_VAL;
         double FOREST_VAL;
@@ -50,7 +57,6 @@ class Model {
         Grid grid;
         int bp;
         std::vector<std::unique_ptr<Agent>> agents;
-        std::vector<std::unique_ptr<Date>> dates;
 };
 
 #endif

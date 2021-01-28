@@ -23,13 +23,14 @@ def show_bar(it, size):
 
 SETTINGS = [(4400, "encontro")]#, (5800, "urupa")]
 
-veg_vals = [-1.0, 0.4, 0.5, 0.6]
-max_vals = [0.0, 0.05, 0.11, 0.23]
+veg_vals = [0.0, 0.4]#, 0.5, 0.6]
+max_vals = [0.0, 0.25]
 fiss_vals = [50, 100, 150]
 r_vals = [0.02, 0.03, 0.04]
 k_vals = [10, 50, 100]
-leap_vals = [0, 5, 10, 15]
+leap_vals = [0, 5, 15]
 perm_vals = [10, 20, 30]
+
 
 for SETTING in SETTINGS:
 

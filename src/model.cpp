@@ -55,8 +55,8 @@ void Model::run(int n, bool write_files, bool show_progress) {
     if (show_progress)
         std::cout << std::endl;
     load_dates();
-    std::pair<double, int> score = get_score();
-    std::cout << std::fixed << std::setprecision(4) << score.first << " " << score.second << std::endl;
+    double score = get_score();
+    std::cout << std::fixed << std::setprecision(4) << score << std::endl;
     if (write_files) {
         write_asc();
         write_dates();
@@ -128,22 +128,35 @@ void Model::update_env() {
 }
 
 void Model::load_dates() {
+    /*
     std::string path {"dates/" + date_folder};
     for (const auto& entry: recursive_directory_iterator(path)) {
         std::unique_ptr<Date> date = std::make_unique<Date>(entry.path());
         dates.push_back(std::move(date));
     }
+    */
+    std::ifstream file("dates/tupi/dates.txt");
+    if (file.is_open()) {
+        std::string line {};
+        while (std::getline(file, line)) {
+            Date date;
+            std::stringstream split(line);
+            split >> date.name >> date.x >> date.y >> date.date;
+            dates.push_back(date);
+        }
+        file.close();
+    }
 }
 
-std::pair<double, int> Model::get_score() {
+double Model::get_score() {
     double total {};
-    int num_dates {};
-    for (auto& date: dates) {
-        std::pair<int, int> cell {grid.to_grid(date->get_x(), date->get_y())};
+    //int num_dates {};
+    for (auto date: dates) {
+        std::pair<int, int> cell {grid.to_grid(date.x, date.y)};
         int x {cell.first}, y {cell.second};
         int date_in_cell {grid.arrival[y][x]};
-        std::vector<int> sim_dates;
         if (date_in_cell == -1) {
+            std::vector<int> sim_dates;
             for (int i {-1}; i <= 1; ++i) {
                 for (int j {-1}; j <= 1; ++j) {
                     int sim_bp {grid.arrival[y+j][x+i]};
@@ -154,15 +167,18 @@ std::pair<double, int> Model::get_score() {
             if (sim_dates.size() > 0)
                 date_in_cell = sim_dates[0];
         }
-        int date_sum {};
-        date->set_prob(date_in_cell);
-        date->year = date_in_cell;
-        total += date->get_prob();
-        if (date->get_prob() > 0.0)
-            ++num_dates;
+        //int date_sum {};
+        //date->set_prob(date_in_cell);
+        //date->year = date_in_cell;
+        //total += date->get_prob();
+        std::cout << date.name << " " << date_in_cell << " " << date.date << std::endl;
+        total += abs(date_in_cell - date.date);
+        //if (date->get_prob() > 0.0)
+        //    ++num_dates;
     }
-    double date_prob_score {total / dates.size()};
-    return std::make_pair(date_prob_score, num_dates);
+    //double date_prob_score {total / dates.size()};
+    //return std::make_pair(date_prob_score, num_dates);
+    return total / dates.size();
 }
 
 void Model::write_snapshot() {
@@ -193,12 +209,14 @@ void Model::write_asc() {
 }
 
 void Model::write_dates() {
+    /*
     std::ofstream file;
     file.open("output/dates.csv");
     file << "name,x,y,score,year\n";
     for (auto& date: dates)
         file << date->get_name() << ", " << date->get_x() << ", " << date->get_y() << ", " << date->get_prob() << ", " << date->year << "\n";
     file.close();
+    */
 }
 
 bool Model::is_in_grid(int x, int y) {
