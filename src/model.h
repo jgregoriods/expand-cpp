@@ -16,6 +16,7 @@ struct Date {
     double x {};
     double y {};
     int date {};
+    int sim_year {};
 };
 
 class Model {
@@ -48,7 +49,7 @@ class Model {
         bool is_forest(int x, int y);
         std::pair<int, int> to_grid(double x, double y);
         std::pair<double, double> get_coords(std::string site_name);
-        std::vector<Date> dates;
+        std::vector<std::unique_ptr<Date>> dates;
     private:
         double SUIT_VAL;
         double FOREST_VAL;

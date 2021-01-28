@@ -73,9 +73,9 @@ for SETTING in SETTINGS:
     pool.close()
 
     with open(f"res{int(time.time())}.csv", "w") as f:
-        f.write("veg,max,fiss,r,k,leap,perm,score,dates\n")
+        f.write("veg,max,fiss,r,k,leap,perm,score\n")
         for r in res:
             for k in r:
                 params = k.split(' ')
-                f.write(f"{params[0]},{params[1]},{params[2]},{params[3]},{params[4]},{params[5]},{params[6]},{float(r[k][0])},{int(r[k][1])}\n")
+                f.write(f"{params[0]},{params[1]},{params[2]},{params[3]},{params[4]},{params[5]},{params[6]},{float(r[k])}\n")
         f.write(f"\nCult: tupi | Start: {START} | Site: {SITE}")

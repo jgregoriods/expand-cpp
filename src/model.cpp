@@ -139,10 +139,10 @@ void Model::load_dates() {
     if (file.is_open()) {
         std::string line {};
         while (std::getline(file, line)) {
-            Date date;
+            std::unique_ptr<Date> date = std::make_unique<Date>();
             std::stringstream split(line);
-            split >> date.name >> date.x >> date.y >> date.date;
-            dates.push_back(date);
+            split >> date->name >> date->x >> date->y >> date->date;
+            dates.push_back(std::move(date));
         }
         file.close();
     }
@@ -151,8 +151,8 @@ void Model::load_dates() {
 double Model::get_score() {
     double total {};
     //int num_dates {};
-    for (auto date: dates) {
-        std::pair<int, int> cell {grid.to_grid(date.x, date.y)};
+    for (auto& date: dates) {
+        std::pair<int, int> cell {grid.to_grid(date->x, date->y)};
         int x {cell.first}, y {cell.second};
         int date_in_cell {grid.arrival[y][x]};
         if (date_in_cell == -1) {
@@ -171,8 +171,8 @@ double Model::get_score() {
         //date->set_prob(date_in_cell);
         //date->year = date_in_cell;
         //total += date->get_prob();
-        std::cout << date.name << " " << date_in_cell << " " << date.date << std::endl;
-        total += abs(date_in_cell - date.date);
+        date->sim_year = date_in_cell;
+        total += abs(date_in_cell - date->date);
         //if (date->get_prob() > 0.0)
         //    ++num_dates;
     }
@@ -209,14 +209,12 @@ void Model::write_asc() {
 }
 
 void Model::write_dates() {
-    /*
     std::ofstream file;
     file.open("output/dates.csv");
-    file << "name,x,y,score,year\n";
+    file << "name,x,y,year\n";
     for (auto& date: dates)
-        file << date->get_name() << ", " << date->get_x() << ", " << date->get_y() << ", " << date->get_prob() << ", " << date->year << "\n";
+        file << date->name << ", " << date->x << ", " << date->y << ", " << date->sim_year << "\n";
     file.close();
-    */
 }
 
 bool Model::is_in_grid(int x, int y) {
