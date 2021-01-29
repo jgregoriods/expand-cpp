@@ -1,8 +1,8 @@
-name,x,y,score,year
-dates/tupi/queimada_nova.txt, 1.89112e+06, 2.57412e+06, 0.843217, 1484
-dates/tupi/emilio_kieffer.txt, 593863, 259394, 0, 1295
-dates/tupi/alto_parana.txt, 787924, 1.20189e+06, 0.310619, 2102
-dates/tupi/sauipe.txt, 2.31799e+06, 2.10562e+06, 0.317149, 1617
-dates/tupi/morro_grande_b.txt, 1.71512e+06, 974134, 0.146497, 1760
-dates/tupi/pedra_talhada_b.txt, 1.22065e+06, 2.0506e+06, 0, 2557
-dates/tupi/caldeirao.txt, 1.04797e+06, 2.97745e+06, 0, 646
+name,x,y,year,from,to
+alto_parana,787924,1201890,2284,2333,2100
+caldeirao,1047970,2977450,1840,1704,1353
+emilio_kieffer,593863,259394,1400,1919,1423
+morro_grande,1715120,974134,1924,1825,1378
+pedra_talhada,1220650,2050600,2628,1509,1286
+queimada_nova,1891120,2574120,1445,1812,1314
+sauipe,2317990,2105620,1576,1921,1593

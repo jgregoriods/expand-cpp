@@ -24,7 +24,7 @@ def show_bar(it, size):
 SETTINGS = [(4400, "encontro")]#, (5800, "urupa")]
 
 veg_vals = [0.0, 0.4]#, 0.5, 0.6]
-max_vals = [0.0, 0.25]
+max_vals = [0.0]#, 0.25]
 fiss_vals = [50, 100, 150]
 r_vals = [0.02, 0.03, 0.04]
 k_vals = [10, 50, 100]
@@ -52,8 +52,7 @@ for SETTING in SETTINGS:
                         f"--leap={leap_val}", f"--max={max_val}",
                         f"--veg={veg_val}", f"--r={r_val}"],
                         stdout=PIPE).communicate()[0]
-        result = result.strip().split()
-        return {params: result}
+        return {params: round(float(result))}
 
 
     combs = []
@@ -69,7 +68,6 @@ for SETTING in SETTINGS:
 
     pool = mp.Pool(11)
     res = pool.map(run, combs)
-    #res = pool.map(run, PARAMS)
     pool.close()
 
     with open(f"res{int(time.time())}.csv", "w") as f:
@@ -77,5 +75,5 @@ for SETTING in SETTINGS:
         for r in res:
             for k in r:
                 params = k.split(' ')
-                f.write(f"{params[0]},{params[1]},{params[2]},{params[3]},{params[4]},{params[5]},{params[6]},{float(r[k])}\n")
+                f.write(f"{params[0]},{params[1]},{params[2]},{params[3]},{params[4]},{params[5]},{params[6]},{r[k]}\n")
         f.write(f"\nCult: tupi | Start: {START} | Site: {SITE}")

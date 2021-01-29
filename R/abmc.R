@@ -107,8 +107,8 @@ plotMap <- function(folder) {
                                +x_0=0 +y_0=0 +ellps=aust_SA +units=m")
     dates <- spTransform(dates, CRS("+init=epsg:4326"))
     dates <- as.data.frame(dates)
-    dates_right <- dates[dates$score > 0,]
-    dates_wrong <- dates[dates$score == 0,]
+    dates_right <- dates[dates$year >= dates$to & dates$year <= dates$from,]
+    dates_wrong <- dates[dates$year < dates$to | dates$year > dates$from,]
     map <- raster(paste(folder, "/arrival.asc", sep=""))
     proj4string(map) <- CRS("+proj=aea +lat_1=-5 +lat_2=-42 +lat_0=-32 +lon_0=-60
                              +x_0=0 +y_0=0 +ellps=aust_SA +units=m")

@@ -121,7 +121,7 @@ int Model::count_agents() {
 }
 
 void Model::update_env() {
-    if (bp % 50 == 0) {
+    if (bp % 100 == 0) {
         std::string filename {"layers/veg/veg" + std::to_string(bp) + ".asc"};
         grid.vegetation = grid.layer_from_file(filename);
     }

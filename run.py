@@ -27,9 +27,9 @@ SITE = "encontro"
 VEG = 0.4
 FOLDER = "tupi"
 
-FISS = 150
-K = 100
-LEAP = 5
+FISS = 50
+K = 10
+LEAP = 15
 R = 0.02
 PERM = 20
 

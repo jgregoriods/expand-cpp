@@ -1,8 +1,8 @@
 name,x,y,year
-alto_parana, 787924, 1.20189e+06, 2284
-caldeirao, 1.04797e+06, 2.97745e+06, 1840
-emilio_kieffer, 593863, 259394, 1400
-morro_grande, 1.71512e+06, 974134, 1924
-pedra_talhada, 1.22065e+06, 2.0506e+06, 2628
-queimada_nova, 1.89112e+06, 2.57412e+06, 1445
-sauipe, 2.31799e+06, 2.10562e+06, 1576
+alto_parana, 787924, 1.20189e+06, 1490
+caldeirao, 1.04797e+06, 2.97745e+06, -1
+emilio_kieffer, 593863, 259394, -1
+morro_grande, 1.71512e+06, 974134, 744
+pedra_talhada, 1.22065e+06, 2.0506e+06, 1363
+queimada_nova, 1.89112e+06, 2.57412e+06, -1
+sauipe, 2.31799e+06, 2.10562e+06, -1
