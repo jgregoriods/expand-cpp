@@ -24,7 +24,7 @@ def grid_y(y):
 CULT = "tupi"
 START = 4400
 SITE = "encontro"
-VEG = 0.4
+VEG = 0.0
 FOLDER = "tupi"
 
 FISS = 50
@@ -37,7 +37,7 @@ PERM = 20
 Popen(["./expand", f"--cult=tupi", f"--date={START}",
         f"--date-folder={FOLDER}", f"--site={SITE}",
         f"--fiss={FISS}", f"--k={K}", f"--perm={PERM}",
-        f"--leap={LEAP}", "--max=0.23", f"--r={R}",
+        f"--leap={LEAP}", "--max=0.1", f"--r={R}",
         f"--veg={VEG}", "--write", "--show-bar"]).wait()
 
 a = np.vstack(np.loadtxt("./output/arrival.asc", skiprows=6).astype(float))
