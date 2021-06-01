@@ -1,9 +1,0 @@
-Region,name,Code,C14Age,C14SD,LabNumber,Material,Tradition,Sub,Latitude,Longitude,Reference,Exclude,calCurves,resOffsets,resErrors,Period,L1,L2,Name,Cultural Affiliation
-ATL,morro_grande,RJ00361,2920,70,Gif-11045,Charcoal,Tupiguarani,,-22.7853,-42.3636,Scheel-Ybert et al. 2008,TRUE,shcal20,0,0,,TP,,Morro Grande (RJ00361),Tupiguarani
-CO,pedra_talhada,GO-NI-176,2860,90,CENA-247,Charcoal,Tupiguarani,,-13.9506,-48.2772,Pontim 2011,TRUE,shcal20,0,0,,TP,,Abrigo Pedra Talhada (GO-NI-176),Tupiguarani
-EAM,bela_vista,,2430,20,,,Tupiguarani,,-5.1164,-48.5534,Almeida 2008,FALSE,shcal20,0,0,,TP,,Bela Vista,Tupiguarani
-PAR,alto_parana,MS-PR-42,2240,40,Gif-11227,,Tupiguarani,,-21.511,-51.993,Kashimoto and Martins 2008,FALSE,shcal20,0,0,,TP,,Alto Paraná 14 (MS-PR-42),Tupiguarani
-NE,sauipe,,1880,60,Beta-118818,,Tupiguarani,,-12.4038,-37.9295,Robrahn-González and Zanettini 2001,FALSE,shcal20,0,0,,TP,,Sauípe 8,Tupiguarani
-ATL,morro_grande,RJ00361,2600,160,Plid-0688,,Tupiguarani,,-22.7853,-42.3636,Scheel-Ybert et al. 2008,TRUE,shcal20,0,0,,TP,,Morro Grande (RJ00361),Tupiguarani
-ATL,morro_grande,RJ00361,2200,70,Gif,,Tupiguarani,,-22.7853,-42.3636,Buarque et al. 2003,TRUE,shcal20,0,0,,TP,,Morro Grande (RJ00361),Tupiguarani
-CO,pedra_talhada,GO-NI-176,2180,80,CENA-244,Charcoal,Tupiguarani,,-13.9506,-48.2772,Pontim 2011,TRUE,shcal20,0,0,,TP,,Abrigo Pedra Talhada (GO-NI-176),Tupiguarani

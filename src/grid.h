@@ -19,7 +19,6 @@ class Grid {
         std::vector<std::vector<int>> owner;
         std::vector<std::vector<double>> elevation;
         std::vector<std::vector<double>> suitability;
-        std::vector<std::vector<double>> vegetation;
 };
 
 #endif

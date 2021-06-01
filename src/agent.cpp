@@ -105,8 +105,6 @@ void Agent::grow() {
 void Agent::update_land() {
     while (population > total_k) {
         std::vector<std::pair<int, int>> cells {check_destinations(neighbors)};
-        // if (cells.size() == 0)
-        //    cells = check_destinations(move_cells);
         if (cells.size() > 0) {
             std::pair<int, int> best_cell = get_best_cell(cells);
             land.push_back(best_cell);
@@ -131,16 +129,12 @@ void Agent::update_land() {
 */
 void Agent::check_fission() {
     if (population > fission_threshold) {
-        //std::vector<std::pair<int, int>> cells = check_destinations(neighbors);
         std::vector<std::pair<int, int>> cells = check_destinations(move_cells);
-        // if (cells.size() == 0)
-        //    cells = check_destinations(move_cells);
         if (cells.size() > 0) {
             std::pair<int, int> best_cell = get_best_cell(cells);
             std::unique_ptr<Agent> new_agent = fission();
             new_agent->move(best_cell.first, best_cell.second);
             model->add(new_agent);
-        //} else if (leap_distance > 0) {
         } else if (leaping) {
             std::vector<std::pair<int, int>> destinations = check_leap_cells();
             if (destinations.size() > 0) {
@@ -148,7 +142,6 @@ void Agent::check_fission() {
                 if (model->get_suitability(best_cell.first, best_cell.second) > model->get_suitability(x, y)) {
                     std::unique_ptr<Agent> new_agent = fission();
                     new_agent->move(best_cell.first, best_cell.second);
-                    //new_agent->leaping = false;
                     model->add(new_agent);
                     leaping = false;
                 }
@@ -169,22 +162,16 @@ std::unique_ptr<Agent> Agent::fission() {
 }
 
 /*
-* Checks whether the village has been in the same cell for too long or whether
-* the % forest in the cell is below the minimum threshold. If yes and there
-* are emtpy cells in the neighborhood, the village moves. Otherwise, if the
-* village can leap, a new search is performed with the leap distance.
+* Checks whether the village has been in the same cell for too long. If yes and
+* there are emtpy cells in the neighborhood, the village moves. Otherwise, if
+* the village can leap, a new search is performed with the leap distance.
 */
 void Agent::check_move() {
-    bool forest_here {model->is_forest(x, y)};
-    if (time_here > permanence || !forest_here) {
-        //std::vector<std::pair<int, int>> cells = check_empty_cells(neighbors);
+    if (time_here > permanence) {
         std::vector<std::pair<int, int>> cells = check_empty_cells(move_cells);
-        // if (cells.size() == 0)
-        //     cells = check_empty_cells(move_cells);
         if (cells.size() > 0) {
             std::pair<int, int> best_cell = get_best_cell(cells);
             move(best_cell.first, best_cell.second);
-        //} else if (leap_distance > 0) {
         } else if (leaping) {
             std::vector<std::pair<int, int>> destinations = check_leap_cells();
             if (destinations.size() > 0) {

@@ -12,17 +12,13 @@
 
 using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
 
-Model::Model(std::string culture, int start_date, double maxent, double forest,
-             std::string date_folder) :
+Model::Model(std::string culture, int start_date, double maxent) :
     culture(culture),
     bp(start_date),
-    SUIT_VAL(maxent),
-    FOREST_VAL(forest),
-    date_folder(date_folder) {
+    SUIT_VAL(maxent) {
         Grid new_grid(825, 638, culture, start_date);
         grid = new_grid;
         agents.reserve(500000);
-        dates.reserve(100);
 }
 
 void Model::setup(std::pair<int, int> coords, int fission_threshold, double r,
@@ -39,7 +35,7 @@ void Model::run(int n, bool write_files, bool show_progress) {
     int progress {};
     int k {};
     for (int i {0}; i < n; ++i) {
-        step(write_files);
+        step();
         std::time(&timer2);
         if (std::difftime(timer2, timer1) > 180) // STOP IF > 3 MINUTES...
             break;
@@ -54,16 +50,12 @@ void Model::run(int n, bool write_files, bool show_progress) {
     }
     if (show_progress)
         std::cout << std::endl;
-    load_dates();
-    double score = get_score();
-    std::cout << std::fixed << std::setprecision(4) << score << std::endl;
     if (write_files) {
         write_asc();
-        write_dates();
     }
 }
 
-void Model::step(bool write_files) {
+void Model::step() {
     auto it = agents.begin();
     while (it != agents.end()) {
         auto& agent = *it;
@@ -71,9 +63,6 @@ void Model::step(bool write_files) {
         ++it;
     }
     bp--;
-    update_env();
-    if (write_files)
-        write_snapshot();
 }
 
 void Model::add(std::unique_ptr<Agent>& agent) {
@@ -90,10 +79,6 @@ int Model::get_owner(int x, int y) {
 
 int Model::get_date(int x, int y) {
     return grid.arrival[y][x];
-}
-
-double Model::get_vegetation(int x, int y) {
-    return grid.vegetation[y][x];
 }
 
 int Model::get_elevation(int x, int y) {
@@ -120,76 +105,6 @@ int Model::count_agents() {
     return agents.size();
 }
 
-void Model::update_env() {
-    if (bp % 100 == 0) {
-        std::string filename {"layers/veg/veg" + std::to_string(bp) + ".asc"};
-        grid.vegetation = grid.layer_from_file(filename);
-    }
-}
-
-void Model::load_dates() {
-    /*
-    std::string path {"dates/" + date_folder};
-    for (const auto& entry: recursive_directory_iterator(path)) {
-        std::unique_ptr<Date> date = std::make_unique<Date>(entry.path());
-        dates.push_back(std::move(date));
-    }
-    */
-    std::ifstream file("dates/tupi/dates.txt");
-    if (file.is_open()) {
-        std::string line {};
-        while (std::getline(file, line)) {
-            std::unique_ptr<Date> date = std::make_unique<Date>();
-            std::stringstream split(line);
-            split >> date->name >> date->x >> date->y >> date->date;
-            dates.push_back(std::move(date));
-        }
-        file.close();
-    }
-}
-
-double Model::get_score() {
-    double total {};
-    //int num_dates {};
-    for (auto& date: dates) {
-        std::pair<int, int> cell {grid.to_grid(date->x, date->y)};
-        int x {cell.first}, y {cell.second};
-        int date_in_cell {grid.arrival[y][x]};
-        if (date_in_cell == -1) {
-            std::vector<int> sim_dates;
-            for (int i {-1}; i <= 1; ++i) {
-                for (int j {-1}; j <= 1; ++j) {
-                    int sim_bp {grid.arrival[y+j][x+i]};
-                    if (sim_bp > -1)
-                        sim_dates.push_back(sim_bp);
-                }
-            }
-            if (sim_dates.size() > 0)
-                date_in_cell = sim_dates[0];
-        }
-        //int date_sum {};
-        //date->set_prob(date_in_cell);
-        //date->year = date_in_cell;
-        //total += date->get_prob();
-        date->sim_year = date_in_cell;
-        total += abs(date_in_cell - date->date);
-        //if (date->get_prob() > 0.0)
-        //    ++num_dates;
-    }
-    //double date_prob_score {total / dates.size()};
-    //return std::make_pair(date_prob_score, num_dates);
-    return total / dates.size();
-}
-
-void Model::write_snapshot() {
-    std::string filename {"python/snapshots/" + std::to_string(bp) + ".csv"};
-    std::ofstream file;
-    file.open(filename);
-    for (auto& agent: agents)
-        file << agent->get_x() << ", " << agent->get_y() << "\n";
-    file.close();
-}
-
 void Model::write_asc() {
     std::ofstream file;
     file.open("output/arrival.asc");
@@ -208,15 +123,6 @@ void Model::write_asc() {
     file.close();
 }
 
-void Model::write_dates() {
-    std::ofstream file;
-    file.open("output/dates.csv");
-    file << "name,x,y,year\n";
-    for (auto& date: dates)
-        file << date->name << ", " << date->x << ", " << date->y << ", " << date->sim_year << "\n";
-    file.close();
-}
-
 bool Model::is_in_grid(int x, int y) {
     if (x >= 0 && x < grid.width && y >= 0 && y < grid.height)
         return true;
@@ -224,15 +130,10 @@ bool Model::is_in_grid(int x, int y) {
         return false;
 }
 
-bool Model::is_forest(int x, int y) {
-    return grid.vegetation[y][x] >= FOREST_VAL;
-}
-
 bool Model::is_suitable(int x, int y) {
     if (is_in_grid(x, y)
         && grid.agents[y][x] == 0
-        && grid.suitability[y][x] >= SUIT_VAL
-        && grid.vegetation[y][x] >= FOREST_VAL)
+        && grid.suitability[y][x] >= SUIT_VAL)
         return true;
     else
         return false;
