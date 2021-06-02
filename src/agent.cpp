@@ -6,7 +6,7 @@
 #include "agent.h"
 #include "model.h"
 
-// unique id for each village
+// unique id for each agent (village)
 int Agent::new_id {1};
 
 // vector with (x, y) differences to each leap cell
@@ -24,6 +24,9 @@ std::vector<std::pair<int, int>> Agent::neighbors {std::make_pair(-1, -1),
 
 std::vector<std::pair<int, int>> Agent::move_cells = {};
 
+/**
+* Implementation of an agent (village) in the agent-based model.
+*/
 Agent::Agent(Model& model, int x, int y, double population, int fission_threshold,
              double r, int k, int permanence, int leap_distance) :
     id {new_id++},
@@ -51,7 +54,7 @@ Agent::Agent(Model& model, int x, int y, double population, int fission_threshol
         // the first agent created.
         if (leap_distance > 0 && leap_cells.size() < 1)
             make_leap_cells(leap_distance);
-        
+
         if (move_cells.size() < 1) {
             for (int i {-2}; i <= 2; ++i)
                 for (int j {-2}; j <= 2; ++j)
@@ -65,10 +68,12 @@ Agent::Agent(Model& model, int x, int y, double population, int fission_threshol
 
 Agent::~Agent() {}
 
-/*
+/**
 * Populates a vector with the (x, y) difference to each cell at leap
 * distance. This is to avoid having to calculate it every time a search is
 * performed.
+*
+* @param distance The leap distance in km.
 */
 void Agent::make_leap_cells(int distance) {
     for (int i {-distance}; i <= distance; ++i) {
@@ -79,7 +84,7 @@ void Agent::make_leap_cells(int distance) {
     }
 }
 
-/*
+/**
 * Sequence of methods to be executed every tick (year) of the model.
 */
 void Agent::step() {
@@ -88,7 +93,7 @@ void Agent::step() {
     check_move();
 }
 
-/*
+/**
 * Population grows exponentially. Update land is called to check whether
 * max density/carrying capactiy has been reached.
 */
@@ -97,7 +102,7 @@ void Agent::grow() {
     update_land();
 }
 
-/*
+/**
 * Checks whether population is above max density. If so, tries to add a new
 * cell to the village's land. If that is not possible, population is stabilized
 * at current max density.
@@ -120,7 +125,7 @@ void Agent::update_land() {
     }
 }
 
-/*
+/**
 * Checks whether population is above fission threshold. If yes and there are
 * cells available to move, the village fissions and the new village moves to
 * the best empty cell. In case there are no cells in the immediate
@@ -150,9 +155,11 @@ void Agent::check_fission() {
     }
 }
 
-/*
+/**
 * Splits the population in half and creates a new village with the same
 * parameters.
+*
+* @return a unique pointer to the new village object.
 */
 std::unique_ptr<Agent> Agent::fission() {
     population /= 2;
@@ -161,7 +168,7 @@ std::unique_ptr<Agent> Agent::fission() {
     return std::move(agent);
 }
 
-/*
+/**
 * Checks whether the village has been in the same cell for too long. If yes and
 * there are emtpy cells in the neighborhood, the village moves. Otherwise, if
 * the village can leap, a new search is performed with the leap distance.
@@ -186,7 +193,7 @@ void Agent::check_move() {
     ++time_here;
 }
 
-/*
+/**
 * Moves the agent to a new cell, takes ownership of it and records the
 * date in case it was never settled or owned.
 */
@@ -207,7 +214,7 @@ void Agent::move(int new_x, int new_y) {
     update_land();
 }
 
-/*
+/**
 * Resets the agent of current cell and the owner of all cells in village's
 * land to 0.
 */
@@ -218,9 +225,13 @@ void Agent::abandon_land() {
         model->set_owner(0, cell.first, cell.second);
 }
 
-/*
+/**
 * Returns a vector of (x, y) coordinates of cells which are not settled,
-* not owned and are inhabitable (based on suitability and vegetation layers).
+* not owned and are inhabitable (based on suitability layer). These are
+* cells that can be incorporated in the village's catchment.
+*
+* @param dist The radius, in km, to search for available cells.
+* @return a vector of (x, y) coordinates of available cells.
 */
 std::vector<std::pair<int, int>> Agent::check_empty_cells(std::vector<std::pair<int, int>> dist) {
     std::vector<std::pair<int, int>> cells;
@@ -235,9 +246,13 @@ std::vector<std::pair<int, int>> Agent::check_empty_cells(std::vector<std::pair<
     return cells;
 }
 
-/*
+/**
 * Returns a vector of (x, y) coordinates of cells in the immediate
-* neighborhood which are not owned and are inhabitable.
+* neighborhood which are not owned and are inhabitable. These are cells
+* which can be settled by the agent.
+*
+* @param dist The radius, in km, to search for available cells.
+* @return a vector of (x, y) coordinates of available cells.
 */
 std::vector<std::pair<int, int>> Agent::check_destinations(std::vector<std::pair<int, int>> dist) {
     std::vector<std::pair<int, int>> cells;
@@ -250,9 +265,11 @@ std::vector<std::pair<int, int>> Agent::check_destinations(std::vector<std::pair
     return cells;
 }
 
-/*
+/**
 * Returns a vector of (x, y) coordinates of cells at leap distance which
 * are not settled, not owned and are inhabitable.
+*
+* @return a vector of (x, y) coordinates of available cells at leap distance.
 */
 std::vector<std::pair<int, int>> Agent::check_leap_cells() {
     std::vector<std::pair<int, int>> cells;
@@ -265,15 +282,18 @@ std::vector<std::pair<int, int>> Agent::check_leap_cells() {
     return cells;
 }
 
-/*
+/**
 * Given a vector of (x, y) cell coordinates, returns the one with the highest
-* suitability value. 
+* suitability value.
+*
+* @param cells A vector of (x, y) coordinates of cells.
+* @return the (x, y) coordinates of the most suitable cell.
 */
 std::pair<int, int> Agent::get_best_cell(std::vector<std::pair<int, int>> cells) {
     double best_val {-1};
     std::pair<int, int> best_cell;
     for (auto cell: cells) {
-        double val = model->get_suitability(cell.first, cell.second); 
+        double val = model->get_suitability(cell.first, cell.second);
         if (val > best_val) {
             best_val = val;
             best_cell = cell;
@@ -282,9 +302,13 @@ std::pair<int, int> Agent::get_best_cell(std::vector<std::pair<int, int>> cells)
     return best_cell;
 }
 
-/*
+/**
 * Returns the distance (in grid cells) from the current cell to another cell
 * given its coordinates.
+*
+* @param x_i The x coordinate of the destination cell.
+* @param y_i The y coordinate of the destination cell.
+* @return the distance (in grid cells) from the agent to the cell.
 */
 int Agent::get_distance(int x_i, int y_i) {
     return round(sqrt(pow(x - x_i, 2) + pow(y - y_i, 2)));

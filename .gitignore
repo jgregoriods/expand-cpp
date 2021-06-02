@@ -1,4 +1,3 @@
-python/snapshots/*.csv
 obj/*.o
 output/*.asc
 *.o

@@ -6,15 +6,14 @@
 
 #include "grid.h"
 
-Grid::Grid(int height, int width, std::string name, int start) :
+Grid::Grid(int height, int width, int start) :
     height(height),
     width(width) {
         agents = new_layer(0);
         owner = new_layer(0);
         arrival = new_layer(-1);
         elevation = layer_from_file("layers/ele.asc");
-        std::string maxent_path {"layers/maxent/" + name + ".asc"};
-        suitability = layer_from_file(maxent_path);
+        suitability = layer_from_file("layers/suitability.asc");
 }
 
 Grid::Grid() : height(825), width(638) {}

@@ -12,7 +12,7 @@ class Grid;
 
 class Model {
     public:
-        Model(std::string culture, int start_date, double maxent);
+        Model(int start_date, double maxent);
         void setup(std::pair<int, int> coords, int fission_threshold, double r, int k,
                    int permanence, int leap_distance);
         void run(int n, bool write_files=false, bool show_progress=false);
@@ -34,7 +34,6 @@ class Model {
         std::pair<double, double> get_coords(std::string site_name);
     private:
         double SUIT_VAL;
-        std::string culture;
         Grid grid;
         int bp;
         std::vector<std::unique_ptr<Agent>> agents;

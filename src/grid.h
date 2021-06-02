@@ -6,7 +6,7 @@
 
 class Grid {
     public:
-        Grid(int height, int width, std::string name, int start);
+        Grid(int height, int width, int start);
         Grid();
         std::vector<std::vector<double>> layer_from_file(std::string filename);
         std::vector<std::vector<int>> new_layer(int val);

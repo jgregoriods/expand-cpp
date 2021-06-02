@@ -12,15 +12,29 @@
 
 using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
 
-Model::Model(std::string culture, int start_date, double maxent) :
-    culture(culture),
+/**
+* Implementation of the model class.
+*/
+Model::Model(int start_date, double maxent) :
     bp(start_date),
     SUIT_VAL(maxent) {
-        Grid new_grid(825, 638, culture, start_date);
+        Grid new_grid(825, 638, start_date);
         grid = new_grid;
         agents.reserve(500000);
 }
 
+/**
+* Sets up the model by specifying the parameters before run. The initial agent
+* is created with the specified parameters and placed in the origin cell, where
+* the start date is recorded.
+*
+* @param coords The (x, y) coordinates of the origin cell.
+* @param fission_threshold The maximum population of a village before fissioning.
+* @param r The annual growth rate of the village.
+* @param k The carrying capacity in persons/100km^2.
+* @param permanence The maximum number of years before a village moves.
+* @param leap_distance The distance, in km, of leapfrogging.
+*/
 void Model::setup(std::pair<int, int> coords, int fission_threshold, double r,
                   int k, int permanence, int leap_distance) {
     auto agent = std::make_unique<Agent>(*this, coords.first, coords.second, (double) fission_threshold,
@@ -29,6 +43,15 @@ void Model::setup(std::pair<int, int> coords, int fission_threshold, double r,
     record_date(coords.first, coords.second);
 }
 
+/**
+* Runs the model for a number of time steps. At the end of the execution, the
+* simulated arrival times can be written as an asc file.
+*
+* @param n The number of time steps (years) to run.
+* @param write_files Whether the resulting simulated arrival times should be
+*   written as an asc file.
+* @param show_progress Whether a progress bar should be shown.
+*/
 void Model::run(int n, bool write_files, bool show_progress) {
     std::time_t timer1, timer2;
     std::time(&timer1);
@@ -37,7 +60,7 @@ void Model::run(int n, bool write_files, bool show_progress) {
     for (int i {0}; i < n; ++i) {
         step();
         std::time(&timer2);
-        if (std::difftime(timer2, timer1) > 180) // STOP IF > 3 MINUTES...
+        if (std::difftime(timer2, timer1) > 180) // stop if > 3 minutes
             break;
         if (show_progress) {
             k++;
@@ -55,6 +78,9 @@ void Model::run(int n, bool write_files, bool show_progress) {
     }
 }
 
+/**
+* The sequence of methods to be executed in a single step of the model.
+*/
 void Model::step() {
     auto it = agents.begin();
     while (it != agents.end()) {
@@ -65,30 +91,79 @@ void Model::step() {
     bp--;
 }
 
+/**
+* Adds a newly created agent to the vector of agents.
+*
+* @param agent A pointer to the agent object.
+*/
 void Model::add(std::unique_ptr<Agent>& agent) {
     agents.push_back(std::move(agent));
 }
 
+/**
+* Returns the unique id of the agent occupying a given cell.
+*
+* @param x The x coordinate of the cell.
+* @param y The y coordinate of the cell.
+* @return the id of the agent in the cell.
+*/
 int Model::get_agent(int x, int y) {
     return grid.agents[y][x];
 }
 
+/**
+* Returns the unique id of the agent who owns a given cell.
+*
+* @param x The x coordinate of the cell.
+* @param y The y coordinate of the cell.
+* @return the id of the owner of the cell.
+*/
 int Model::get_owner(int x, int y) {
     return grid.owner[y][x];
 }
 
+/**
+* Returns the simulated arrival time in a given cell.
+*
+* @param x The x coordinate of the cell.
+* @param y The y coordinate of the cell.
+* @return the simulated arrival time in the cell. This will return -1 if the
+*   cell has never been settled.
+*/
 int Model::get_date(int x, int y) {
     return grid.arrival[y][x];
 }
 
+/**
+* Returns the elevation of a given cell.
+*
+* @param x The x coordinate of the cell.
+* @param y The y coordinate of the cell.
+* @return the elevation of the cell.
+*/
 int Model::get_elevation(int x, int y) {
     return grid.elevation[y][x];
 }
 
+/**
+* Returns the suitability of a given cell.
+*
+* @param x The x coordinate of the cell.
+* @param y The y coordinate of the cell.
+* @return the suitability of the cell.
+*/
 double Model::get_suitability(int x, int y) {
     return grid.suitability[y][x];
 }
 
+/**
+* Adds the unique id of an agent to the respective cell in the agent layer of
+* the model's grid.
+*
+* @param agent_id The id of the agent.
+* @param x The x coordinate of the cell.
+* @param y The y coordinate of the cell.
+*/
 void Model::place_agent(int agent_id, int x, int y) {
     grid.agents[y][x] = agent_id;
 }
