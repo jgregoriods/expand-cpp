@@ -2,3 +2,5 @@ obj/*.o
 output/*.asc
 *.o
 expand
+.DS_store
+.vscode
