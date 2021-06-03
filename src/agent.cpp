@@ -144,10 +144,12 @@ void Agent::check_fission() {
             std::vector<std::pair<int, int>> destinations = check_leap_cells();
             if (destinations.size() > 0) {
                 std::pair<int, int> best_cell = get_best_cell(destinations);
+                // only leap if destination is more attractive than current cell
                 if (model->get_suitability(best_cell.first, best_cell.second) > model->get_suitability(x, y)) {
                     std::unique_ptr<Agent> new_agent = fission();
                     new_agent->move(best_cell.first, best_cell.second);
                     model->add(new_agent);
+                    // leap can only be performed once
                     leaping = false;
                 }
             }
@@ -183,8 +185,10 @@ void Agent::check_move() {
             std::vector<std::pair<int, int>> destinations = check_leap_cells();
             if (destinations.size() > 0) {
                 std::pair<int, int> best_cell = get_best_cell(destinations);
+                // only leap if destination is more attractive than current cell
                 if (model->get_suitability(best_cell.first, best_cell.second) > model->get_suitability(x, y)) {
                     move(best_cell.first, best_cell.second);
+                    // leap can only be performed once
                     leaping = false;
                 }
             }
