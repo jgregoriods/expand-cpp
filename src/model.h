@@ -12,7 +12,7 @@ class Grid;
 
 class Model {
     public:
-        Model(int start_date, double maxent);
+        Model(int start_date, double suit_threshold);
         void setup(std::pair<int, int> coords, int fission_threshold, double r, int k,
                    int permanence, int leap_distance);
         void run(int n, bool write_files=false, bool show_progress=false);

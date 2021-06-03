@@ -20,7 +20,7 @@ struct Options {
     std::string origin {"encontro"};
     bool show_bar {false};
     bool write_files {false};
-    double maxent {0.0};
+    double suit_threshold {0.0};
     double r {0.025};
     Options(std::vector<std::string> args) {
         for (auto str: args) {
@@ -38,8 +38,8 @@ struct Options {
                 permanence = std::stod(str.substr(7, str.length()));
             else if (str.substr(0, 7) == "--leap=")
                 leap_distance = std::stoi(str.substr(7, str.length()));
-            else if (str.substr(0, 6) == "--max=")
-                maxent = std::stod(str.substr(6, str.length()));
+            else if (str.substr(0, 6) == "--suit=")
+                suit_threshold = std::stod(str.substr(6, str.length()));
             else if (str == "--show-bar")
                 show_bar = true;
             else if (str == "--write")
@@ -52,7 +52,7 @@ struct Options {
 int main(const int argc, const char* argv[]) {
     std::vector<std::string> args(argv+1, argv+argc);
     Options opts(args);
-    Model model(opts.start_date, opts.maxent);
+    Model model(opts.start_date, opts.suit_threshold);
     auto coords = model.get_coords(opts.origin);
     auto grid_coords = model.to_grid(coords.first, coords.second);
     model.setup(grid_coords, opts.fission_threshold, opts.r, opts.k, opts.permanence, opts.leap_distance);

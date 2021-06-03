@@ -15,9 +15,9 @@ using recursive_directory_iterator = std::filesystem::recursive_directory_iterat
 /**
  * Implementation of the model class.
  */
-Model::Model(int start_date, double maxent) :
+Model::Model(int start_date, double suit_threshold) :
     bp(start_date),
-    SUIT_VAL(maxent) {
+    SUIT_VAL(suit_threshold) {
         Grid new_grid(825, 638, start_date);
         grid = new_grid;
         agents.reserve(500000);
