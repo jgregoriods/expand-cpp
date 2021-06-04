@@ -38,13 +38,12 @@ struct Options {
                 permanence = std::stod(str.substr(7, str.length()));
             else if (str.substr(0, 7) == "--leap=")
                 leap_distance = std::stoi(str.substr(7, str.length()));
-            else if (str.substr(0, 6) == "--suit=")
-                suit_threshold = std::stod(str.substr(6, str.length()));
+            else if (str.substr(0, 7) == "--suit=")
+                suit_threshold = std::stod(str.substr(7, str.length()));
             else if (str == "--show-bar")
                 show_bar = true;
             else if (str == "--write")
                 write_files = true;
-
         }
     }
 };
