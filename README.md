@@ -1,7 +1,6 @@
 # ExPaND C++
 
-**Jonas Gregorio de Souza**<br/>
-jonas.gregorio@gmail.com<br/>
+Jonas Gregorio de Souza<br/>
 [![ORCiD](https://img.shields.io/badge/ORCiD-0000--0001--7879--4531-green.svg)](https://orcid.org/0000-0001-6032-4443)<br/>
 
 This is a C++ implementation of the agent-based model of South American population expansions originally written in Python (<a>https://github.com/jgregoriods/expand</a>). The model simulates demic diffusion from the growth, fission and relocation of individual villages. For details of the original implementation, see <a href=" https://doi.org/10.1371/journal.pone.0232367">Souza et al. (2020)</a>.
