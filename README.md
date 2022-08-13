@@ -14,7 +14,7 @@ Movement is always directed to the most suitable cell based on suitability raste
 ## Usage
 
 ```
-./expand --date=5000 --site=encontro --fiss=150 --k=20 --r=0.025 --perm=10 --leap=150 --suit=0.25 --show.bar --write
+./expand --date=5000 --site=encontro --fiss=150 --k=20 --r=0.025 --perm=10 --leap=150 --suit=0.25 --show-bar --write
 ```
 
 The following arguments can be supplied:
